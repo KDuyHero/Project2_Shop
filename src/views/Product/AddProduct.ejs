@@ -10,34 +10,63 @@
       integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
       crossorigin="anonymous"
     />
-    <title>Sign in</title>
+    <title>Sign up</title>
   </head>
   <body>
-    <%- include("../Patial/Header.ejs")%>
+    <%-include("../Patial/Header.ejs")%>
     <div class="container mt-5">
-      <form action="/api/users/signin" method="POST">
+      <form action="/api/products" method="POST" enctype="multipart/form-data">
         <div class="form-group">
-          <label for="exampleInputEmail1">Email address</label>
+          <label for="name">Name</label>
           <input
-            type="email"
+            type="text"
             class="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-            placeholder="Enter email"
-            name="email"
+            id="name"
+            placeholder="name"
+            name="name"
           />
-          <small id="emailHelp" class="form-text text-muted"
-            >We'll never share your email with anyone else.</small
-          >
         </div>
+
         <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
+          <label for="image">Image</label>
           <input
-            type="password"
+            type="file"
             class="form-control"
-            id="exampleInputPassword1"
-            placeholder="Password"
-            name="password"
+            id="image"
+            name="productImage"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            id="description"
+            placeholder="Description"
+            name="description"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="price">price</label>
+          <input
+            type="text"
+            class="form-control"
+            id="price"
+            placeholder="price"
+            name="price"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="discount">discount</label>
+          <input
+            type="text"
+            class="form-control"
+            id="discount"
+            placeholder="discount"
+            name="discount"
           />
         </div>
 

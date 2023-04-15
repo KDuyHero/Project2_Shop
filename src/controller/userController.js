@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Cart = require("../models/Cart");
 const { ReturnDocument } = require("mongodb");
 
 const bornToken = (data, secret, time) => {
@@ -41,8 +42,7 @@ let Signin = async (req, res) => {
 // [POST] : /signup
 let Signup = async (req, res) => {
   // get data from req.body
-  let dataUser = ({ firstName, lastName, userName, email, password } =
-    req.body);
+  let dataUser = ({ firstName, lastName, email, password } = req.body);
   try {
     // find user to check exist
     let user = await User.findOne({ email: dataUser.email }).exec();
@@ -70,7 +70,7 @@ let Signup = async (req, res) => {
 };
 
 // [GET] : /:id
-let viewInfoUser = (req, res) => {
+let getUser = (req, res) => {
   // get userId from url
   let id = req.params.id;
 
@@ -84,8 +84,13 @@ let viewInfoUser = (req, res) => {
   });
 };
 
+// USER
+// GET: /
+let getAllUser = (req, res) => {
+  res.send("get all user");
+};
 // PUT : /:id
-let updateInfoUser = async (req, res) => {
+let updateUser = async (req, res) => {
   try {
     let data = req.body;
     let id = req.params.id;
@@ -119,4 +124,40 @@ let deleteUser = async (req, res) => {
     });
   }
 };
-module.exports = { Signin, Signup, viewInfoUser, updateInfoUser, deleteUser };
+
+// GET /cart
+let getCart = async (req, res) => {
+  try {
+    let userId = req.user._id;
+    let cart = await Cart.findOne({ user: userId }).exec();
+    if (!cart) {
+      let newCart = new Cart({
+        user: userId,
+        cartItems: [],
+      });
+      newCart.save();
+      return res.status(400).json({
+        message: "Cart not found",
+        newCart,
+      });
+    }
+    return res.status(200).json({
+      message: "OK",
+      cart,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      message: "error",
+      error,
+    });
+  }
+};
+module.exports = {
+  Signin,
+  Signup,
+  getUser,
+  updateUser,
+  deleteUser,
+  getAllUser,
+  getCart,
+};

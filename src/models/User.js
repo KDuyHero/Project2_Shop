@@ -1,5 +1,6 @@
 const bcrpyt = require("bcrypt");
 const mongoose = require("mongoose");
+
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -9,11 +10,6 @@ const userSchema = new mongoose.Schema(
     lastName: {
       type: String,
       require: true,
-    },
-    userName: {
-      type: String,
-      require: true,
-      unique: true,
     },
     email: {
       type: String,
@@ -47,8 +43,7 @@ userSchema.virtual("fullName").get(() => {
 });
 
 userSchema.pre("save", function (next) {
-  if (this.userName)
-    this.password = bcrpyt.hashSync(this.password, parseInt(process.env.SALT));
+  this.password = bcrpyt.hashSync(this.password, parseInt(process.env.SALT));
   next();
 });
 

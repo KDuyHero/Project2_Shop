@@ -1,19 +1,35 @@
 const Product = require("./Product");
 const mongoose = require("mongoose");
 const cartSchema = new mongoose.Schema({
-  products: {
-    type: [mongoose.Schema.Types.ObjectId],
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
   },
+  cartItems: [
+    {
+      product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        require: true,
+      },
+      quantity: {
+        type: Number,
+        default: 1,
+      },
+      price: {
+        type: Number,
+        require: true,
+      },
+    },
+  ],
 });
 
-cartSchema.virtual("totalPrice").get(async function () {
-  let total = 0;
-  for (let i = 0; i < this.products.length; i++) {
-    let product = await Product.findById(this.products[i]).exec();
-    if (product) total += product.realPrice;
-  }
+cartSchema.virtual("totalPrice").get(function () {
+  let totalPrice = this.cartItems.reduce((total, item) => {
+    return total + item.price * item.quantity;
+  }, 0);
 
-  return total;
+  return totalPrice;
 });
 
 module.exports = mongoose.model("Cart", cartSchema);

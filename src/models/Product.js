@@ -13,17 +13,18 @@ const productSchema = new mongoose.Schema({
     require,
   },
   price: {
-    type: String,
+    type: Number,
     require,
   },
   discount: {
-    type: String,
+    type: Number,
     require,
+    default: 0,
   },
 });
 
 productSchema.virtual("realPrice").get(function () {
-  return this.price * (100 - this.discount);
+  return (this.price * (100 - this.discount)) / 100;
 });
 
 module.exports = mongoose.model("Product", productSchema);

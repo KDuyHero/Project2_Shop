@@ -22,19 +22,22 @@ let getProduct = async (req, res) => {
     let id = req.params.id;
     let product = await Product.findById(id).exec();
     if (!product) {
-      return res.status(400).json({
+      return res.status(200).json({
+        errorCode: 1,
         message: "don't found product",
+        product: {},
       });
     }
-    res.render("Product/ViewProduct", {
-      product: product,
-      signin: true,
-      signup: true,
-    });
-    // return res.status(200).json({
-    //   message: "successful",
-    //   product,
+    // res.render("Product/ViewProduct", {
+    //   product: product,
+    //   signin: true,
+    //   signup: true,
     // });
+    return res.status(200).json({
+      errorCode: 0,
+      message: "OK",
+      product,
+    });
   } catch (error) {
     res.status(400).json({
       message: "error",
@@ -46,13 +49,37 @@ let getProduct = async (req, res) => {
 //  POST /
 let createProduct = async (req, res) => {
   try {
-    let data = ({ name, description, price, discount } = req.body);
-    data.image = req.file.path.split("public")[1];
-    new Product(data).save((validateBeforeSave = true));
-    return res.redirect("/api/products/new");
-    // return res.status(200).json({
-    //   message: "Create new product successful",
-    // });
+    let data = ({
+      name,
+      description,
+      price,
+      discount,
+      category,
+      rear_camera,
+      front_camera,
+      operating_system,
+      display_size,
+      power,
+      memory,
+      ram,
+    } = req.body);
+    data.images = req.files ? req.files.map((file) => file.filename) : [];
+    data.detail = {
+      rear_camera,
+      front_camera,
+      operating_system,
+      display_size,
+      power,
+      memory,
+      ram,
+    };
+
+    let product = new Product(data);
+    product.save((validateBeforeSave = true));
+    return res.status(200).json({
+      message: "OK",
+      product: product,
+    });
   } catch (error) {
     return res.status(400).json({
       message: "error",
@@ -61,19 +88,6 @@ let createProduct = async (req, res) => {
   }
 };
 
-let getEditProductForm = async (req, res) => {
-  try {
-    let productId = req.params.id;
-    let product = await Product.findById(productId).exec();
-
-    return res.render("Product/EditProduct", { product: product });
-  } catch (error) {
-    return res.status(400).json({
-      message: "error",
-      error,
-    });
-  }
-};
 // PUT /:id
 let updateProduct = async (req, res) => {
   try {
@@ -85,8 +99,6 @@ let updateProduct = async (req, res) => {
     let newProduct = await Product.findByIdAndUpdate(id, data, {
       returnDocument: "after",
     });
-
-    return res.redirect("/api");
     return res.status(200).json({
       message: "OK",
       newProduct,
@@ -104,7 +116,6 @@ let deleteProduct = async (req, res) => {
   try {
     let id = req.params.id;
     let productDelete = await Product.findByIdAndDelete(id).exec();
-    return res.redirect("/api");
     return res.status(200).json({
       message: "OK",
       productDelete,
@@ -116,11 +127,29 @@ let deleteProduct = async (req, res) => {
     });
   }
 };
+
+//GET /categorys/:category
+let getProductByCategory = async (req, res) => {
+  try {
+    let category = req.params.category;
+    let products = await Product.find({ category }).exec();
+    res.status(200).json({
+      errorCode: 0,
+      message: "OK",
+      products,
+    });
+  } catch (error) {
+    res.status(404).json({
+      message: "Error",
+      error,
+    });
+  }
+};
 module.exports = {
   getAllProduct,
   getProduct,
   createProduct,
-  getEditProductForm,
+  getProductByCategory,
   updateProduct,
   deleteProduct,
 };

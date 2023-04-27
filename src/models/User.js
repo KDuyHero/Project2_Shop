@@ -28,10 +28,6 @@ const userSchema = new mongoose.Schema(
     refresh_token: {
       type: String,
     },
-    CartId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
-    },
   },
   {
     timestamps: true,

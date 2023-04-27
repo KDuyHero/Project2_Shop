@@ -1,4 +1,3 @@
-const Product = require("./Product");
 const mongoose = require("mongoose");
 const cartSchema = new mongoose.Schema({
   user: {
@@ -24,12 +23,12 @@ const cartSchema = new mongoose.Schema({
   ],
 });
 
-cartSchema.virtual("totalPrice").get(function () {
-  let totalPrice = this.cartItems.reduce((total, item) => {
-    return total + item.price * item.quantity;
-  }, 0);
+// cartSchema.virtual("totalPrice").get(function () {
+//   let totalPrice = this.cartItems.reduce((total, item) => {
+//     return total + item.price * item.quantity;
+//   }, 0);
 
-  return totalPrice;
-});
+//   return totalPrice;
+// });
 
 module.exports = mongoose.model("Cart", cartSchema);

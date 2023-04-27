@@ -6,6 +6,7 @@ const {
   getProduct,
   createProduct,
   getEditProductForm,
+  getProductByCategory,
   updateProduct,
   deleteProduct,
 } = require("../controller/productController");
@@ -15,7 +16,8 @@ const storage = multer.diskStorage({
     cb(null, "src/public/images");
   },
   filename: function (req, file, cb) {
-    cb(null, "product-" + Date.now() + "-" + req.body.name + ".jpg");
+    // imageName: product-time-fileNameUpload
+    cb(null, "product-" + Date.now() + "-" + file.originalname);
   },
 });
 
@@ -24,20 +26,17 @@ const upload = multer({ storage: storage });
 // get all product ~ Homepage
 route.get("/", getAllProduct);
 
-// get form create product
-route.get("/new", (req, res) => {
-  res.render("Product/AddProduct", {});
-});
-// get form edit
-route.get("/:id/edit", getEditProductForm);
 //get one product ~ ViewDetail
 route.get("/:id", getProduct);
 
+// get all product by category
+route.get("/categorys/:category", getProductByCategory);
+
 // create new product
-route.post("/", upload.single("productImage"), createProduct);
+route.post("/", upload.array("images", 5), createProduct);
 
 // update product
-route.put("/:id", upload.single("productImage"), updateProduct);
+route.put("/:id", upload.array("images", 5), updateProduct);
 
 //delete product
 route.delete("/:id", deleteProduct);

@@ -8,18 +8,35 @@ const productSchema = new mongoose.Schema({
     type: String,
     require,
   },
-  image: {
-    type: String,
-    require,
+  images: {
+    type: [String],
+    // require,
   },
   price: {
     type: Number,
+    require,
+  },
+  category: {
+    type: String,
     require,
   },
   discount: {
     type: Number,
     require,
     default: 0,
+  },
+  detail: {
+    type: mongoose.Schema.Types.Mixed,
+    // require,
+    default: {
+      rear_camera: "14",
+      front_camera: "14",
+      operating_system: "IOS",
+      display_size: "6.1",
+      power: "3279",
+      memory: "12",
+      ram: "4",
+    },
   },
 });
 

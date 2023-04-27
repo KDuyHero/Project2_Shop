@@ -1,6 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const app = express();
 var methodOverride = require("method-override");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+app.use(cors());
 require("dotenv").config();
 
 const Router = require("./routes");

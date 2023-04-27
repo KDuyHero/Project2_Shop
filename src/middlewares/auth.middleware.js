@@ -1,16 +1,19 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-const requireSignin = async (req, res, next) => {
-  // get token from headers
 
+// middleware
+const requireSignin = async (req, res, next) => {
   try {
+    // check xem có token trong headers hay không
     if (
       req.headers["authorization"] &&
       req.headers["authorization"].startsWith("bearer")
     ) {
+      // lấy token từ header
       const token = req.headers["authorization"].split(" ")[1];
+      // Không có token đính kèm
       if (!token) {
-        return res.status(404).json({
+        return res.status(200).json({
           message: "No token",
         });
       }
@@ -18,14 +21,28 @@ const requireSignin = async (req, res, next) => {
       req.user = await User.findOne({ email }).exec();
       next();
     } else {
-      return res.status(404).json({
+      // Không có trường authorization or không bắt đầu bởi bearer
+      return res.status(200).json({
+        errorCode: 1,
         message: "No token",
       });
     }
   } catch (error) {
-    return res.status(400).json({
-      message: "error",
+    // token hết hạn
+    if (error.name === "TokenExpiredError") {
+      return res.status(200).json({
+        errorCode: 2,
+        code: 401,
+        newAccessToken: "new Access token",
+        message: "jwt expired",
+        error,
+      });
+    }
+    // lỗi khác
+    return res.status(200).json({
+      code: 500,
       error,
+      message: "invalid",
     });
   }
 };

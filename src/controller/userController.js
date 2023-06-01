@@ -1,65 +1,104 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const Cart = require("../models/Cart");
-const { ReturnDocument } = require("mongodb");
+const validator = require("validator");
+const bcrpyt = require("bcrypt");
+const UserModel = require("../models/UserModel");
+const CartModel = require("../models/CartModel");
 
 const bornToken = (data, secret, time) => {
   return jwt.sign(data, secret, { expiresIn: time });
 };
 
-const verifyToken = (token) => {
-  return jwt.verify(token, process.env.REFRESH_KEY);
-};
-
 const refreshToken = async (req, res) => {
   try {
-    let { refresh_token } = req.body;
-    let decode = await verifyToken(refresh_token);
+    // get refreshToken from cookies
+    let refreshToken = req.cookies?.refreshToken;
+
+    if (!refreshToken)
+      return res.json("no refresh token in cookie, go to login");
+    const decode = await jwt.verify(refreshToken, process.env.REFRESH_KEY);
+
+    const foundUser = await UserModel.findById(decode._id);
+    if (!foundUser)
+      return res.json(
+        "No user match with refresh token data, go to login again"
+      );
+
+    const access_token = bornToken(
+      { _id: decode._id },
+      process.env.ACCESS_KEY,
+      "1d"
+    );
+    const refresh_token = bornToken(
+      { _id: decode._id },
+      process.env.REFRESH_KEY,
+      "1d"
+    );
+
+    res.cookie("refreshToken", refresh_token, {
+      httpOnly: true,
+      expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    });
     return res.status(200).json({
-      newToken: bornToken(
-        { email: decode.email },
-        process.env.SECRET_KEY,
-        "1m"
-      ),
+      message: "OK",
+      access_token,
     });
   } catch (error) {
-    return res.status(200).json({
-      message: "No token",
+    return res.status(500).json({
+      message: "Error went refresh token, go to login",
     });
   }
 };
 
 // [POST] : /signin
 let Signin = async (req, res) => {
-  const { email, password } = req.body;
+  const { userName, password } = req.body;
   try {
     // find user
-    let user = await User.findOne({ email }).exec();
+    let user = await UserModel.findOne({ userName });
     // check user ? exist
-    if (!user) {
-      return res.status(200).json({
-        errorCode: 1,
-        message: "Email is not exist!",
-      });
-    }
+    if (!user) return res.status(200).json("User is not exist");
     // check password
-    if (!user.authentication(password)) {
-      return res.status(200).json({
-        errorCode: 2,
-        message: "Incorrect password!",
-      });
-    }
+    if (!user.isPasswordMatched(password))
+      return res.status(200).json("Wrong password");
     // correct email and password
-    const access_token = bornToken({ email }, process.env.SECRET_KEY, "1m");
+    const access_token = bornToken(
+      { _id: user._id },
+      process.env.ACCESS_KEY,
+      "1d"
+    );
+
+    const refresh_token = bornToken(
+      {
+        _id: user._id,
+      },
+      process.env.REFRESH_KEY,
+      "1d"
+    );
+    user.refresh_token = refresh_token;
+    await user.save();
+
+    res.cookie("refreshToken", refresh_token, {
+      // httpOnly: true,
+      // expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      // sameSite: "none",
+      // domain: ".localhost",
+    });
+
     return res.status(200).json({
-      errorCode: 0,
-      message: "Signin successful",
+      success: true,
+      message: "OK",
       access_token,
-      refresh_token: user.refresh_token,
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        userName: user.userName,
+        email: user.email,
+        _id: user._id,
+        isAdmin: user.isAdmin,
+      },
     });
   } catch (error) {
-    return res.status(200).json({
-      errorCode: 3,
+    return res.status(500).json({
       message: "error in backend",
       error,
     });
@@ -69,29 +108,36 @@ let Signin = async (req, res) => {
 // [POST] : /signup
 let Signup = async (req, res) => {
   // get data from req.body
-  let dataUser = ({ firstName, lastName, email, password } = req.body);
+  const { firstName, lastName, userName, email, password } = req.body;
   try {
+    // validate in server side
+    if (!firstName || !lastName || !userName || !email || !password)
+      return res.status(200).json("All fields are required");
+    if (!validator.isEmail(email))
+      return res.status(200).json("Email is invalid");
+    // if (!validator.isStrongPassword(password))
+    //   return res.status(200).json("Password must be strong");
     // find user to check exist
-    let user = await User.findOne({ email: dataUser.email }).exec();
-    if (user) {
-      return res.status(200).json({
-        errorCode: 1,
-        message: "Email already exist!",
-        user,
-      });
-    }
+    let foundUser = await UserModel.findOne({ email });
+    if (foundUser) return res.status(200).json("Email was exist");
+    foundUser = await UserModel.findOne({ userName });
+    if (foundUser) return res.status(200).json("UserName was exist");
 
-    const refresh_token = bornToken({ email }, process.env.REFRESH_KEY, "365d");
-    dataUser = { ...dataUser, refresh_token };
     // create and save new user
-    let newUser = new User(dataUser);
+    let newUser = new UserModel(req.body);
+
+    // hash password
+    const salt = bcrpyt.genSaltSync(parseInt(process.env.SALT));
+    newUser.password = bcrpyt.hashSync(password, salt);
     await newUser.save((validateBeforeSave = true));
     return res.status(200).json({
-      errorCode: 0,
-      message: "create new user successful!",
+      success: true,
+      message: "OK",
+      userInfo: { firstName, lastName, userName, email },
     });
   } catch (error) {
-    return res.status(400).json({
+    console.log(error);
+    return res.status(500).json({
       message: "error",
       error,
     });
@@ -99,56 +145,41 @@ let Signup = async (req, res) => {
 };
 
 // [GET] : /:id
-let getUser = (req, res) => {
-  // get userId from url
-  let id = req.params.id;
-
-  // if user is user in token
-  if (id === req.user.id) {
-    return res.json(req.user);
-  }
-  // else
-  return res.json({
-    message: "this user don't login",
-  });
-};
-
-// USER
-// GET: /
-let getAllUser = (req, res) => {
-  res.send("get all user");
-};
-// PUT : /:id
-let updateUser = async (req, res) => {
+let getUser = async (req, res) => {
   try {
-    let data = req.body;
-    let id = req.params.id;
-    let newUser = await User.findByIdAndUpdate(id, data, {
-      returnDocument: "after",
-    });
-    res.status(200).json({
-      message: "update successful!",
-      newUser,
+    // get userId from url
+    let userId = req?.params?.userId;
+    // if user is user in token
+    const foundUser = await UserModel.findById(userId);
+    if (!foundUser) return res.stauts(200).json("Không tìm thấy user này");
+    return res.status(200).json({
+      success: true,
+      message: "OK",
+      user: foundUser,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: "error",
+    console.log(error);
+    return res.status(500).json({
+      message: "Something went wrong!",
       error,
     });
   }
 };
 
-// DELETE: /:id
-let deleteUser = async (req, res) => {
+// GET: /
+let getAllUsers = async (req, res) => {
   try {
-    let id = req.params.id;
-    await User.findByIdAndDelete(id);
-    res.status(200).json({
-      message: "Delete user successful!",
+    const users = await UserModel.find({});
+
+    return res.status(200).json({
+      success: true,
+      message: "OK",
+      users: users,
     });
   } catch (error) {
-    return res.status(400).json({
-      messsage: "error",
+    console.log(error);
+    return res.status(500).json({
+      message: "Something went wrong!",
       error,
     });
   }
@@ -158,25 +189,81 @@ let deleteUser = async (req, res) => {
 let getCart = async (req, res) => {
   try {
     let userId = req.user._id;
-    let cart = await Cart.findOne({ user: userId }).exec();
+    let cart = await CartModel.findOne({ user: userId }).exec();
     if (!cart) {
-      let newCart = new Cart({
+      let newCart = new CartModel({
         user: userId,
         cartItems: [],
       });
       newCart.save();
-      return res.status(400).json({
-        message: "Cart not found",
-        cart,
-      });
+      return res.status(200).json("cart not found");
     }
     return res.status(200).json({
+      success: true,
       message: "OK",
       cart,
     });
   } catch (error) {
-    return res.status(400).json({
+    console.log(error);
+    return res.status(500).json({
+      message: "somethign wrong in get cart",
+      error,
+    });
+  }
+};
+// PUT : /:userId
+let updateUser = async (req, res) => {
+  try {
+    let { firstName, lastName, email } = req.body;
+    if (!firstName || !lastName || !email)
+      return res.status(200).json("firstName, lastName or Email is empty");
+    let userId = req.params.userId;
+    let newUser = await UserModel.findByIdAndUpdate(userId, req.body, {
+      new: true,
+    });
+    res.status(200).json({
+      success: true,
+      message: "update successful!",
+      newUser,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
       message: "error",
+      error,
+    });
+  }
+};
+
+// DELETE: /:userId
+let deleteUser = async (req, res) => {
+  try {
+    let userId = req.params.userId;
+    await UserModel.findByIdAndDelete(userId);
+    res.status(200).json({
+      success: true,
+      message: "Delete user successful!",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      messsage: "error",
+      error,
+    });
+  }
+};
+
+const handleLogout = async () => {
+  try {
+    res.clearCookie("refreshToken");
+    res.status(200).json({
+      success: true,
+      message: "OK",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Error",
       error,
     });
   }
@@ -187,7 +274,8 @@ module.exports = {
   getUser,
   updateUser,
   deleteUser,
-  getAllUser,
+  getAllUsers,
   getCart,
   refreshToken,
+  handleLogout,
 };

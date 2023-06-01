@@ -1,19 +1,19 @@
 const express = require("express");
 const multer = require("multer");
-const route = express.Router();
+const router = express.Router();
+
+const { verifyToken, isAdmin } = require("../middlewares/auth.middleware");
 const {
-  getAllProduct,
+  getAllProducts,
   getProduct,
   createProduct,
-  getEditProductForm,
-  getProductByCategory,
   updateProduct,
   deleteProduct,
 } = require("../controller/productController");
 // multer
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "src/public/images");
+    cb(null, "src/public/images/product");
   },
   filename: function (req, file, cb) {
     // imageName: product-time-fileNameUpload
@@ -24,20 +24,22 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // get all product ~ Homepage
-route.get("/", getAllProduct);
+router.get("/", getAllProducts);
 
 //get one product ~ ViewDetail
-route.get("/:id", getProduct);
-
-// get all product by category
-route.get("/categorys/:category", getProductByCategory);
+router.get("/:productId", getProduct);
 
 // create new product
-route.post("/", upload.array("images", 5), createProduct);
-
+router.post("/", upload.array("images", 10), createProduct);
 // update product
-route.put("/:id", upload.array("images", 5), updateProduct);
+router.put(
+  "/:productId",
+  verifyToken,
+  isAdmin,
+  upload.array("images", 10),
+  updateProduct
+);
 
 //delete product
-route.delete("/:id", deleteProduct);
-module.exports = route;
+router.delete("/:productId", deleteProduct);
+module.exports = router;

@@ -1,20 +1,23 @@
 const express = require("express");
-const fetch = require("node-fetch");
-const route = express.Router();
-const userRoute = require("./userRoute");
-const productRoute = require("./productRoute");
-const cartRoute = require("./cartRoute");
-const testRoute = require("./testRoute");
+const router = express.Router();
+const userRouter = require("./userRoute");
+const categoryRouter = require("./categoryRoute");
+const productRouter = require("./productRoute");
+const cartRouter = require("./cartRoute");
+const brandRouter = require("./brandRoute");
+const { verifyToken, isAdmin } = require("../middlewares/auth.middleware");
 
 let Router = (app) => {
-  route.use("/users", userRoute);
-  route.use("/products", productRoute);
-  route.use("/carts", cartRoute);
-  route.use("/test", testRoute);
-  route.get("/", (req, res) => {
-    res.render("test");
-  });
-  app.use("/api", route);
+  router.use("/users", userRouter);
+  router.use("/categories", categoryRouter);
+  router.use("/brands", brandRouter);
+  router.use("/products", productRouter);
+  router.use("/carts", cartRouter);
+  router.get("/is-admin", verifyToken, isAdmin, (req, res) =>
+    res.status(200).json({ ok: true })
+  );
+
+  app.use("/api", router);
 };
 
 module.exports = Router;

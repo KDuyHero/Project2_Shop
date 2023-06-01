@@ -1,4 +1,4 @@
-const Cart = require("../models/Cart");
+const CartModel = require("../models/CartModel");
 
 // POST  /add
 // middleware requireSignin
@@ -13,7 +13,7 @@ let addToCart = async (req, res) => {
   }
    */
   try {
-    let cart = await Cart.findOne({ user: req.user._id }).exec();
+    let cart = await CartModel.findOne({ user: req.user._id }).exec();
     // has cart
     if (cart) {
       let product = req.body.cartItems.product;
@@ -49,7 +49,7 @@ let addToCart = async (req, res) => {
       }
     } else {
       // don't has cart before
-      const newCart = new Cart({
+      const newCart = new CartModel({
         user: req.user._id,
         cartItems: [req.body.cartItems],
       });
@@ -69,7 +69,7 @@ let addToCart = async (req, res) => {
 // remove is add with odd quantity
 let removeFromCart = async (req, res) => {
   try {
-    let cart = await Cart.findOne({ user: req.user._id }).exec();
+    let cart = await CartModel.findOne({ user: req.user._id }).exec();
     // has cart
     if (cart) {
       let product = req.body.cartItems.product;
@@ -113,7 +113,7 @@ let removeFromCart = async (req, res) => {
         });
       }
     } else {
-      const newCart = new Cart({
+      const newCart = new CartModel({
         user: req.user._id,
         cartItems: [],
       });

@@ -1,5 +1,5 @@
 const express = require("express");
-const route = express.Router();
+const router = express.Router();
 
 const {
   Signin,
@@ -7,39 +7,30 @@ const {
   getUser,
   updateUser,
   deleteUser,
-  getAllUser,
+  getAllUsers,
   getCart,
   refreshToken,
 } = require("../controller/userController");
-const {
-  requireSignin,
-  isEmail,
-  isAdmin,
-} = require("../middlewares/auth.middleware");
+const { verifyToken, isAdmin } = require("../middlewares/auth.middleware");
 
 // auth
-route.post("/signin", Signin);
+router.post("/signin", Signin);
 // ~ /users [create user]
-route.post("/signup", Signup);
+router.post("/signup", Signup);
 
-// User
-
-// get cart
-route.get("/cart", requireSignin, getCart);
-
-// get all user
-route.get("/", getAllUser);
 // refresh_token
-route.post("/refresh-token", refreshToken);
+router.get("/refresh-token", refreshToken);
+// get cart
+router.get("/cart", verifyToken, getCart);
 // view info
-route.get("/:id", requireSignin, getUser);
+router.get("/:userId", verifyToken, isAdmin, getUser);
+// get all user
+router.get("/", verifyToken, isAdmin, getAllUsers);
 
 // update info
-route.put("/:id", updateUser);
+router.put("/:userId", verifyToken, isAdmin, updateUser);
 
 // delete user
-route.delete("/:id", deleteUser);
+router.delete("/:userId", deleteUser);
 
-// refresh_token
-
-module.exports = route;
+module.exports = router;

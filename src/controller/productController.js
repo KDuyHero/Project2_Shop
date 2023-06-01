@@ -1,16 +1,35 @@
-const Product = require("../models/Product");
-
+const fs = require("fs");
+const ProductModel = require("../models/ProductModel");
+const { cloudinaryUploadImg } = require("../utils/cloudinary");
 // GET /
-let getAllProduct = async (req, res) => {
+
+const getAllProducts = async (req, res) => {
   try {
-    let products = await Product.find({}).exec();
+    const queryObj = { ...req.query };
+    const excludeFields = ["page", "sort", "limit", "fields"];
+    const fields = req?.query?.fields?.split(",").join(" ") || null;
+    const sort = req?.query?.sort?.split(",").join(" ") || "createdAt";
+    const page = req?.query?.page || 1;
+    const limit = req?.query?.limit || 0;
+    const skip = (page - 1) * limit;
+    excludeFields.forEach((el) => delete queryObj[el]);
+    // convert to json and add $ before gte, gt, lte, lt
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // Model.find(objectQuery, stringFields, obtion)
+    const products = await ProductModel.find(JSON.parse(queryStr), fields, {
+      skip,
+      limit,
+      sort,
+    });
     return res.status(200).json({
+      success: true,
       message: "OK",
       products,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: "error",
+    return res.status(500).json({
+      message: "Something went wrong",
       error,
     });
   }
@@ -19,27 +38,19 @@ let getAllProduct = async (req, res) => {
 // GET /:id
 let getProduct = async (req, res) => {
   try {
-    let id = req.params.id;
-    let product = await Product.findById(id).exec();
+    let productId = req.params.productId;
+    let product = await ProductModel.findById(productId).exec();
     if (!product) {
-      return res.status(200).json({
-        errorCode: 1,
-        message: "don't found product",
-        product: {},
-      });
+      return res.status(200).json("Product not found");
     }
-    // res.render("Product/ViewProduct", {
-    //   product: product,
-    //   signin: true,
-    //   signup: true,
-    // });
     return res.status(200).json({
-      errorCode: 0,
+      success: true,
       message: "OK",
       product,
     });
   } catch (error) {
-    res.status(400).json({
+    console.log(error);
+    res.status(500).json({
       message: "error",
       error,
     });
@@ -54,7 +65,7 @@ let createProduct = async (req, res) => {
       description,
       price,
       discount,
-      category,
+      categories,
       rear_camera,
       front_camera,
       operating_system,
@@ -63,7 +74,13 @@ let createProduct = async (req, res) => {
       memory,
       ram,
     } = req.body);
-    data.images = req.files ? req.files.map((file) => file.filename) : [];
+    data.images = req.files
+      ? req.files.map((file) => {
+          const path = file.path.split("public")[1];
+          return path.replace(/\\/g, "/");
+        })
+      : [];
+    data.categories = categories.split(",");
     data.detail = {
       rear_camera,
       front_camera,
@@ -74,13 +91,15 @@ let createProduct = async (req, res) => {
       ram,
     };
 
-    let product = new Product(data);
+    let product = new ProductModel(data);
     product.save((validateBeforeSave = true));
     return res.status(200).json({
+      success: true,
       message: "OK",
       product: product,
     });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({
       message: "error",
       error,
@@ -91,32 +110,86 @@ let createProduct = async (req, res) => {
 // PUT /:id
 let updateProduct = async (req, res) => {
   try {
-    let id = req.params.id;
-    let data = ({ name, description, price, discount } = req.body);
-    if (req.file) {
-      data.image = req.file.path.split("public")[1];
-    }
-    let newProduct = await Product.findByIdAndUpdate(id, data, {
-      returnDocument: "after",
+    let productId = req.params.productId;
+    const foundProduct = await ProductModel.findById(productId);
+    if (!foundProduct)
+      return res.status(200).json("Sản phẩm này hiện không tồn tại");
+    let {
+      name,
+      description,
+      price,
+      discount,
+      categories,
+      rear_camera,
+      front_camera,
+      operating_system,
+      display_size,
+      power,
+      memory,
+      ram,
+      deleteImage,
+    } = req.body;
+
+    deleteImage = deleteImage.split(",");
+    deleteImage.forEach((url) => {
+      fs.unlinkSync(``);
+    });
+    let data = {
+      name,
+      description,
+      price,
+      discount,
+      categories,
+      rear_camera,
+      front_camera,
+      operating_system,
+      display_size,
+      power,
+      memory,
+      ram,
+    };
+    // solve image
+    // get image in form
+    data.images = req.files
+      ? req.files.map((file) => {
+          const path = file.path.split("public")[1];
+          return path.replace(/\\/g, "/");
+        })
+      : [];
+    // images = images in form + image has saved - image was delete
+    data.images = [
+      ...data.images,
+      ...foundProduct.images?.filter((value) => !deleteImage?.includes(value)),
+    ];
+    // end solve image
+    data.categories = categories.split(",");
+
+    console.log(data);
+
+    let newProduct = await ProductModel.findByIdAndUpdate(productId, data, {
+      new: true,
     });
     return res.status(200).json({
+      success: true,
       message: "OK",
       newProduct,
     });
   } catch (error) {
-    return res.status(400).json({
+    console.log(error);
+    return res.status(500).json({
       message: "error",
       error,
     });
   }
 };
 
-// DELETE /:id
+// DELETE /:productId
 let deleteProduct = async (req, res) => {
   try {
-    let id = req.params.id;
-    let productDelete = await Product.findByIdAndDelete(id).exec();
+    let productId = req.params.productId;
+    let productDelete = await ProductModel.findByIdAndDelete(productId);
     return res.status(200).json({
+      success: true,
       message: "OK",
       productDelete,
     });
@@ -128,28 +201,10 @@ let deleteProduct = async (req, res) => {
   }
 };
 
-//GET /categorys/:category
-let getProductByCategory = async (req, res) => {
-  try {
-    let category = req.params.category;
-    let products = await Product.find({ category }).exec();
-    res.status(200).json({
-      errorCode: 0,
-      message: "OK",
-      products,
-    });
-  } catch (error) {
-    res.status(404).json({
-      message: "Error",
-      error,
-    });
-  }
-};
 module.exports = {
-  getAllProduct,
+  getAllProducts,
   getProduct,
   createProduct,
-  getProductByCategory,
   updateProduct,
   deleteProduct,
 };

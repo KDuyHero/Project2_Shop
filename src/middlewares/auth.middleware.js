@@ -1,68 +1,52 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const UserModel = require("../models/UserModel");
 
 // middleware
-const requireSignin = async (req, res, next) => {
+const verifyToken = async (req, res, next) => {
   try {
-    // check xem có token trong headers hay không
-    if (
-      req.headers["authorization"] &&
-      req.headers["authorization"].startsWith("bearer")
-    ) {
-      // lấy token từ header
-      const token = req.headers["authorization"].split(" ")[1];
-      // Không có token đính kèm
-      if (!token) {
-        return res.status(200).json({
-          message: "No token",
-        });
-      }
-      const { email } = jwt.verify(token, process.env.SECRET_KEY);
-      req.user = await User.findOne({ email }).exec();
+    const authorization =
+      req.headers.authorization || req.headers.Authorization;
+    if (authorization?.startsWith("Bearer ")) {
+      const token = authorization.split(" ")[1];
+      const decode = await jwt.verify(token, process.env.ACCESS_KEY);
+      req.userId = decode._id;
       next();
     } else {
-      // Không có trường authorization or không bắt đầu bởi bearer
-      return res.status(200).json({
-        errorCode: 1,
-        message: "No token",
-      });
+      return res.status(200).json("No authorization header");
     }
   } catch (error) {
-    // token hết hạn
     if (error.name === "TokenExpiredError") {
       return res.status(200).json({
-        errorCode: 2,
         code: 401,
-        newAccessToken: "new Access token",
         message: "jwt expired",
-        error,
       });
     }
-    // lỗi khác
-    return res.status(200).json({
-      code: 500,
+    return res.status(500).json({
+      message: "Something went wrong!",
       error,
-      message: "invalid",
     });
   }
 };
 
-let isEmail = (req, res, next) => {
-  const { email } = req.body;
-  const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-  if (regex.test(email)) {
-    next();
-  }
-
-  res.send("not pass");
-};
-
 // behind middleware requireSignin
-let isAdmin = (req, res, next) => {
-  if (req.user.isAdmin) {
-    next();
-  }
+const isAdmin = async (req, res, next) => {
+  try {
+    const userId = req?.userId;
+    if (!userId) return res.status(200).json("No id from token");
 
-  return res.send("is not admin");
+    const user = await UserModel.findById(userId);
+    // không tồn tại user
+    if (!user)
+      return res.status(200).json("No user match with userId in isAdmin");
+    //   Không có field role hoặc role không phải admin
+    if (!user.isAdmin) return res.status(200).json("You are not admin");
+    // isAdmin
+    next();
+  } catch (error) {
+    return res.status(500).json({
+      message: "Somthing went wrong!",
+      error,
+    });
+  }
 };
-module.exports = { requireSignin, isEmail, isAdmin };
+module.exports = { verifyToken, isAdmin };

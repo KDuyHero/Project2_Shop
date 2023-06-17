@@ -5,9 +5,11 @@ import { useAuth } from "../context/auth";
 import axios from "../axios";
 import ListBanner from "../components/Layout/ListBanner";
 import { Link } from "react-router-dom";
+import { useSearch } from "../context/search";
 
 function HomePage() {
   const [auth, setAuth] = useAuth();
+  const [search, setSearch] = useSearch();
   const [hotProducts, setHotProducts] = useState([]);
   const [iphoneProducts, setIphoneProducts] = useState([]);
   const [samsungProducts, setSamsungProducts] = useState([]);

@@ -1,8 +1,9 @@
 import { Link, NavLink } from "react-router-dom";
-import { useAuth } from "../../context/auth";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../../context/auth";
 import { toast } from "react-hot-toast";
-import axios from "../../axios";
+
+import axios from "../../../axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faAddressBook,
@@ -15,7 +16,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 function Header() {
   const [auth, setAuth] = useAuth();
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [brands, setBrands] = useState([]);
 
   const getAllBrands = async () => {
@@ -44,11 +45,10 @@ function Header() {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    alert(`Search with ${search}`);
-    setSearch("");
+    alert(`Search with ${searchInput}`);
+    setSearchInput("");
   };
 
-  const handleBrandClick = (brand) => {};
   return (
     <div className="d-flex flex-column header-wrapper">
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -89,8 +89,8 @@ function Header() {
                 type="search"
                 placeholder="Search"
                 aria-label="Search"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
               <button
                 className="btn btn-outline-success"
@@ -105,16 +105,6 @@ function Header() {
             </form>
 
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-              {/* <li className="nav-item">
-                  <NavLink to="/" className="nav-link">
-                    Home
-                  </NavLink>
-                </li> */}
-              {/* <li className="nav-item">
-                <NavLink to="/category" className="nav-link">
-                  Category
-                </NavLink>
-              </li> */}
               {auth?.user?.isAdmin && (
                 <li className="nav-item">
                   <NavLink to="/admin" className="nav-link">
@@ -187,7 +177,6 @@ function Header() {
               to={`/products/brands/${brand.name}`}
               key={index}
               className="col-2 col-lg-1 g-0 text-center brand"
-              // onClick={() => handleBrandClick(brand)}
             >
               {brand.name}
             </NavLink>

@@ -1,5 +1,6 @@
 import {
   faArrowDown,
+  faFire,
   faMicrochip,
   faMobileScreen,
   faSdCard,
@@ -57,8 +58,18 @@ function Card({
   return product !== null ? (
     <div className="card-container container-fluid" onClick={handleClickCard}>
       <div className="row flex-column">
-        <span className="col-12">Giảm {convertPriceToString(3000000)}</span>
-        <span className="col-12">Trả góp 0%</span>
+        <span className="col-12" style={{ color: "red", fontWeight: "bold" }}>
+          <FontAwesomeIcon icon={faFire} />
+          {product?.discount > 0
+            ? " Giảm " +
+              convertPriceToString(
+                Math.ceil(product.price * product.discount) / 100
+              )
+            : " Giá tốt"}
+        </span>
+        <span className="col-12" style={{ minHeight: "25px" }}>
+          {product?.quantity <= 0 ? "Tạm hết hàng" : ""}
+        </span>
       </div>
       <div
         className="product-image container-fluid"

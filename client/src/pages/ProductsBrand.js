@@ -5,27 +5,45 @@ import { useAuth } from "../context/auth";
 import axios from "../axios";
 import ListBanner from "../components/Layout/ListBanner";
 import { useParams } from "react-router-dom";
+import { useSearch } from "../context/search";
+import FilterBar from "../components/Layout/FilterBar";
 
 function ProductBrand() {
   const params = useParams();
   const [auth, setAuth] = useAuth();
+  const [search, setSearch] = useSearch();
   const [products, setProducts] = useState([]);
 
   const getAllProductsOfBrand = async () => {
-    const response = await axios.get(`/products?brand=${params.brand}`);
+    let searchQuery = "";
+    Object.keys(search).map((value, index) => {
+      if (search[value]) {
+        searchQuery += `&${value}=${search[value]}`;
+      }
+    });
+    const response = await axios.get(
+      `/products?brand=${params.brand}${searchQuery}`
+    );
     if (response?.data?.products) {
       setProducts(response.data.products);
     }
   };
 
   useEffect(() => {
+    setSearch({
+      limit: null,
+      sort: "-discount",
+    });
     getAllProductsOfBrand();
   }, [params]);
-
+  useEffect(() => {
+    getAllProductsOfBrand();
+  }, [search]);
   return (
     <Layout title="Homepage">
       <div className="container mt-4 g-0 homepage-wrapper">
         <ListBanner />
+        <FilterBar />
         <div className="row mt-3 container-fluid block-content">
           <h2>Điện thoại {params.brand}</h2>
           {products.map((product, index) => {

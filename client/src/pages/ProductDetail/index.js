@@ -5,12 +5,16 @@ import Layout from "../../components/Layout/Layout";
 import { toast } from "react-hot-toast";
 import "./ProductDetail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear } from "@fortawesome/free-solid-svg-icons";
+import { faGear, faStar } from "@fortawesome/free-solid-svg-icons";
 
 function ProductDetail() {
   const params = useParams();
   const [currentProduct, setCurrentProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
+  const [comment, setComment] = useState("");
+  const [rating, setRating] = useState(0);
+  const [rated, setRated] = useState(0);
+  const arr = [0, 0, 0, 0, 0];
   const currency = {
     rear_camera: "MP",
     front_camera: "MP",
@@ -21,12 +25,19 @@ function ProductDetail() {
     ram: "GB",
   };
   const getCurrentProduct = async () => {
-    console.log("get");
     const response = await axios.get(`/products/${params.productId}`);
     if (response?.data?.success) {
-      console.log(response.data);
       setCurrentProduct(response.data.product);
       setCurrentImage(response.data.product.images[0]);
+
+      // let ratings = response?.data?.product?.ratings || [];
+      // console.log(response.data.product);
+      // if (ratings.length !== 0) {
+      //   console.log(ratings);
+      //   let sum = ratings.reduce((sum, value) => sum + value, 0);
+      //   console.log(sum);
+      //   setRated(Math.ceil(sum / ratings.length));
+      // }
     } else toast.error(response.data);
   };
 
@@ -43,12 +54,29 @@ function ProductDetail() {
     return domain + url;
   };
 
+  const handleComment = () => {
+    console.log(comment);
+    setComment("");
+  };
+
+  const handleRating = (index) => {
+    setRating(index + 1);
+  };
+
+  const handleRatingOut = () => {
+    setRating(rated);
+  };
+
+  const handleRated = (index) => {
+    alert(index + 1 + " star");
+    setRated(index + 1);
+  };
   useEffect(() => {
     getCurrentProduct();
   }, [params.productId]);
   return (
     <Layout title={"Product detail"}>
-      <div className="container-fluid  product-detail-wrapper ">
+      <div className="container-fluid  product-detail-wrapper">
         {currentProduct !== null ? (
           <>
             <div className="row container-fluid justify-content-between">
@@ -159,6 +187,65 @@ function ProductDetail() {
                       </tbody>
                     </table>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="container-fluid row">
+              <div className="col-12">
+                <div className="container-fluid rate-container p-3">
+                  <div className="container-fluid">
+                    <span className="d-inline-block me-4">
+                      Xếp hạng sản phẩm:
+                    </span>
+                    <span className="d-inline-block">
+                      {arr.map((value, index) => {
+                        if (index < rating) {
+                          return (
+                            <FontAwesomeIcon
+                              icon={faStar}
+                              key={index}
+                              style={{ color: "yellow" }}
+                              onMouseOver={() => handleRating(index)}
+                              onMouseOut={handleRatingOut}
+                              onClick={() => handleRated(index)}
+                            />
+                          );
+                        } else
+                          return (
+                            <FontAwesomeIcon
+                              icon={faStar}
+                              key={index}
+                              onMouseOver={() => handleRating(index)}
+                              onMouseOut={handleRatingOut}
+                              onClick={() => handleRated(index)}
+                            />
+                          );
+                      })}
+                    </span>
+                  </div>
+
+                  <div className="row">
+                    <p className="mb-1">Nhận xét</p>
+                    <textarea
+                      className="rate-comment-input"
+                      name=""
+                      id=""
+                      cols="30"
+                      rows="8"
+                      placeholder="Enter your comment"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
+                    ></textarea>
+                  </div>
+
+                  <button
+                    className="btn btn-secondary mt-2"
+                    style={{ margin: "0 12px", padding: "10px 20px" }}
+                    onClick={handleComment}
+                  >
+                    Gửi
+                  </button>
                 </div>
               </div>
             </div>

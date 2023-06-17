@@ -44,7 +44,11 @@ function Layout({ children, title, description, keywords, author }) {
         {children}
       </main>
       {visible && (
-        <button onClick={scrollToTop} className="button-to-top">
+        <button
+          onClick={scrollToTop}
+          style={{ zIndex: "99999" }}
+          className="button-to-top"
+        >
           <FontAwesomeIcon icon={faAnglesUp} />
         </button>
       )}

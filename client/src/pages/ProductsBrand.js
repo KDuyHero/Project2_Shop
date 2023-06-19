@@ -21,9 +21,11 @@ function ProductBrand() {
         searchQuery += `&${value}=${search[value]}`;
       }
     });
-    const response = await axios.get(
-      `/products?brand=${params.brand}${searchQuery}`
-    );
+
+    const response =
+      params.brand !== "search"
+        ? await axios.get(`/products?brand=${params.brand}${searchQuery}`)
+        : await axios.get(`/products?${searchQuery}`);
     if (response?.data?.products) {
       setProducts(response.data.products);
     }
@@ -33,6 +35,7 @@ function ProductBrand() {
     setSearch({
       limit: null,
       sort: "-discount",
+      search: params.brand === "search" ? search.search : "",
     });
     getAllProductsOfBrand();
   }, [params]);
@@ -45,7 +48,11 @@ function ProductBrand() {
         <ListBanner />
         <FilterBar />
         <div className="row mt-3 container-fluid block-content">
-          <h2>Điện thoại {params.brand}</h2>
+          {params.brand !== "search" ? (
+            <h2>Điện thoại {params.brand}</h2>
+          ) : (
+            <h2>Kết quả tìm kiếm với {search.search}</h2>
+          )}
           {products.map((product, index) => {
             return (
               <div

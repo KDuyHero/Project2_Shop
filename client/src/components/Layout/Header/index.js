@@ -1,5 +1,6 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+
 import { useAuth } from "../../../context/auth";
 import { toast } from "react-hot-toast";
 
@@ -14,9 +15,17 @@ import {
   faRightFromBracket,
   faRightToBracket,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSearch } from "../../../context/search";
+
 function Header() {
+  const params = useParams();
+  const navigate = useNavigate();
   const [auth, setAuth] = useAuth();
   const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useSearch({
+    limit: null,
+    sort: "-discount",
+  });
   const [brands, setBrands] = useState([]);
 
   const getAllBrands = async () => {
@@ -45,8 +54,14 @@ function Header() {
 
   const handleSearch = (event) => {
     event.preventDefault();
-    alert(`Search with ${searchInput}`);
+    setSearch({
+      ...search,
+      search: searchInput,
+    });
     setSearchInput("");
+    if (!params.brand) {
+      navigate("/products/brands/search");
+    }
   };
 
   return (

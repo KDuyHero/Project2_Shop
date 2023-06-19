@@ -79,6 +79,7 @@ function ProductDetail() {
       <div className="container-fluid  product-detail-wrapper">
         {currentProduct !== null ? (
           <>
+            {/* Product detail  */}
             <div className="row container-fluid justify-content-between">
               <div className="col-12 col-md-6 col-lg-6">
                 <div className="product-image-container container-fluid bottom-shadow">
@@ -88,7 +89,7 @@ function ProductDetail() {
                       backgroundImage: `url(${getImageUrl(currentImage)})`,
                     }}
                   ></div>
-                  <div className="all-images row">
+                  <div className="all-images row justify-content-center">
                     {currentProduct !== null &&
                       currentProduct.images.map((image, index) => {
                         return (
@@ -191,6 +192,7 @@ function ProductDetail() {
               </div>
             </div>
 
+            {/* Rating */}
             <div className="container-fluid row">
               <div className="col-12">
                 <div className="container-fluid rate-container p-3">

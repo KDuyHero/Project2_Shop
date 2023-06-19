@@ -28,7 +28,7 @@
 }
 
 .product-detail-wrapper .all-images .sub-image {
-    margin             : auto;
+    /* margin             : auto; */
     padding-top        : 15%;
     background-repeat  : no-repeat;
     background-position: center;

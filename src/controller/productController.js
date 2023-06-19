@@ -6,22 +6,44 @@ const { cloudinaryUploadImg } = require("../utils/cloudinary");
 const getAllProducts = async (req, res) => {
   try {
     const queryObj = { ...req.query };
-    const excludeFields = ["page", "sort", "limit", "fields"];
+    const excludeFields = ["page", "sort", "limit", "fields", "search"];
     const fields = req?.query?.fields?.split(",").join(" ") || null;
     const sort = req?.query?.sort?.split(",").join(" ") || "createdAt";
     const page = req?.query?.page || 1;
     const limit = req?.query?.limit || 0;
     const skip = (page - 1) * limit;
+    const search = req?.query?.search || "";
     excludeFields.forEach((el) => delete queryObj[el]);
     // convert to json and add $ before gte, gt, lte, lt
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+
     // Model.find(objectQuery, stringFields, obtion)
-    const products = await ProductModel.find(JSON.parse(queryStr), fields, {
-      skip,
-      limit,
-      sort,
-    });
+    const products = await ProductModel.find(
+      {
+        ...JSON.parse(queryStr),
+        $or: [
+          {
+            name: { $regex: search, $options: "i" },
+          },
+          {
+            description: { $regex: search, $options: "i" },
+          },
+          {
+            brand: { $regex: search, $options: "i" },
+          },
+          {
+            categories: { $regex: search, $options: "i" },
+          },
+        ],
+      },
+      fields,
+      {
+        skip,
+        limit,
+        sort,
+      }
+    );
     return res.status(200).json({
       success: true,
       message: "OK",

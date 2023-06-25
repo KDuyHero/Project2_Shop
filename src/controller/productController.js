@@ -17,7 +17,6 @@ const getAllProducts = async (req, res) => {
     // convert to json and add $ before gte, gt, lte, lt
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
     // Model.find(objectQuery, stringFields, obtion)
     const products = await ProductModel.find(
       {

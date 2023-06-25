@@ -4,7 +4,7 @@ import Layout from "../../components/Layout/Layout";
 import { toast } from "react-hot-toast";
 import axios from "../../axios";
 import { useAuth } from "../../context/auth";
-import Modal from "../../components/Layout/Modal";
+import ModalDashboard from "../../components/Atoms/Modal/ModalDashboard";
 import { Link } from "react-router-dom";
 
 function Products() {
@@ -96,7 +96,7 @@ function Products() {
                 })}
               </tbody>
             </table>
-            <Modal
+            <ModalDashboard
               instance="product"
               object={object}
               setObject={setObject}

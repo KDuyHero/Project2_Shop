@@ -4,45 +4,46 @@ const CartModel = require("../models/CartModel");
 // middleware requireSignin
 let addToCart = async (req, res) => {
   /*
-  req.body {
-    cartItems: {
+    body: {
       product: productId, 
-      quantity, 
-      price
+      quantity: number, 
     }
-  }
-   */
+  */
   try {
-    let cart = await CartModel.findOne({ user: req.user._id }).exec();
+    let cart = await CartModel.findOne({ orderBy: req.userId }).exec();
     // has cart
     if (cart) {
-      let product = req.body.cartItems.product;
+      let product = req.body.product;
       // find product in cart
-      let indexItem = cart.cartItems.findIndex((item) => {
+      // cart.products = {{product, quantity},...}
+      let productIndex = cart.products.findIndex((item) => {
         return item.product == product;
       });
       // has product
-      if (indexItem >= 0) {
+      if (productIndex >= 0) {
         let newQuantity =
-          cart.cartItems[indexItem].quantity + req.body.cartItems.quantity;
-        // change cartItems with spread
-        cart.cartItems[indexItem] = {
-          ...req.body.cartItems,
+          cart.products[productIndex].quantity + req.body.quantity;
+        // change products with spread
+        cart.products[productIndex] = {
+          product: req.body.product,
           quantity: newQuantity,
         };
         // save
         let newCart = await cart.save();
         res.status(200).json({
-          errorCode: 0,
+          success: true,
           message: "OK",
           cart: newCart,
         });
       } else {
         // add product to cart
-        cart.cartItems.push(req.body.cartItems);
+        cart.products.push({
+          product: req.body.product,
+          quantity: req.body.quantity,
+        });
         cart.save();
         return res.status(200).json({
-          errorCode: 0,
+          success: true,
           message: "OK",
           cart: cart,
         });
@@ -50,12 +51,12 @@ let addToCart = async (req, res) => {
     } else {
       // don't has cart before
       const newCart = new CartModel({
-        user: req.user._id,
-        cartItems: [req.body.cartItems],
+        orderBy: req.userId,
+        products: [{ product: req.body.product, quantity: req.body.quantity }],
       });
       await newCart.save();
       return res.status(200).json({
-        errorCode: 0,
+        success: true,
         message: "OK",
         cart: newCart,
       });
@@ -69,56 +70,58 @@ let addToCart = async (req, res) => {
 // remove is add with odd quantity
 let removeFromCart = async (req, res) => {
   try {
-    let cart = await CartModel.findOne({ user: req.user._id }).exec();
+    let cart = await CartModel.findOne({ orderBy: req.userId }).exec();
     // has cart
     if (cart) {
-      let product = req.body.cartItems.product;
+      let product = req.body.product;
       // find product in cart
-      let indexItem = cart.cartItems.findIndex((item) => {
+      let indexItem = cart.products.findIndex((item) => {
         return item.product == product;
       });
       // has product
       if (indexItem >= 0) {
-        // change cartItems with spread
+        // change products with spread
         // new quantity
-        let newQuantity =
-          cart.cartItems[indexItem].quantity - req.body.cartItems.quantity;
+        let newQuantity = cart.products[indexItem].quantity - req.body.quantity;
         // delete product
         if (newQuantity <= 0) {
-          cart.cartItems.splice(indexItem, 1);
+          cart.products.splice(indexItem, 1);
           let newCart = await cart.save();
           return res.status(200).json({
-            errorCode: 0,
+            success: true,
             message: "OK",
-            newCart,
+            cart: newCart,
           });
         }
-        cart.cartItems[indexItem] = {
-          ...req.body.cartItems,
+        cart.products[indexItem] = {
+          product: req.body.product,
           quantity: newQuantity,
         };
         // save
         let newCart = await cart.save();
         res.status(200).json({
-          errorCode: 0,
+          success: true,
           message: "OK",
-          newCart,
+          cart: newCart,
         });
       } else {
         // add product to cart
 
         return res.status(200).json({
-          errorCode: 1,
+          success: false,
           message: "Don't found product",
         });
       }
     } else {
       const newCart = new CartModel({
-        user: req.user._id,
-        cartItems: [],
+        orderBy: req.userId,
+        products: [],
       });
       await newCart.save();
-      return res.status(201).json({ newCart });
+      return res.status(201).json({
+        success: true,
+        cart: newCart,
+      });
     }
   } catch (error) {
     return res.status(400).json({ error });

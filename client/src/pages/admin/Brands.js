@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useAuth } from "../../context/auth";
 import BrandForm from "../../components/Forms/BrandForm";
-import Modal from "../../components/Layout/Modal";
+import ModalDashboard from "../../components/Atoms/Modal/ModalDashboard";
 function Brands() {
   const [auth, setAuth] = useAuth();
   const [brands, setBrands] = useState([]);
@@ -116,7 +116,7 @@ function Brands() {
               </tbody>
             </table>
 
-            <Modal
+            <ModalDashboard
               instance="brand"
               object={object}
               method={method}

@@ -110,6 +110,7 @@ let Signup = async (req, res) => {
   // get data from req.body
   const { firstName, lastName, userName, email, password } = req.body;
   try {
+    console.log(firstName, lastName, userName, email, password);
     // validate in server side
     if (!firstName || !lastName || !userName || !email || !password)
       return res.status(200).json("All fields are required");
@@ -188,14 +189,16 @@ let getAllUsers = async (req, res) => {
 // GET /cart
 let getCart = async (req, res) => {
   try {
-    let userId = req.user._id;
-    let cart = await CartModel.findOne({ user: userId }).exec();
+    let userId = req.userId;
+    let cart = await CartModel.findOne({ orderBy: userId })
+      .populate("products.product")
+      .exec();
     if (!cart) {
       let newCart = new CartModel({
-        user: userId,
-        cartItems: [],
+        orderBy: userId,
+        products: [],
       });
-      newCart.save();
+      await newCart.save();
       return res.status(200).json("cart not found");
     }
     return res.status(200).json({
@@ -206,7 +209,7 @@ let getCart = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({
-      message: "somethign wrong in get cart",
+      message: "something wrong in get cart",
       error,
     });
   }

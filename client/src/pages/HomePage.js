@@ -15,7 +15,9 @@ function HomePage() {
   const [samsungProducts, setSamsungProducts] = useState([]);
   const getHotProducts = async () => {
     // get 4 products has the best discount
-    const response = await axios.get("/products?sort=-discount&limit=4");
+    const response = await axios.get(
+      "/products?categories=hot sale&sort=-discount&limit=4"
+    );
     if (response?.data?.products) {
       setHotProducts(response.data.products);
     }

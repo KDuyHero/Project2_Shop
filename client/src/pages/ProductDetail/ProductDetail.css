@@ -42,6 +42,13 @@
     border: 1px solid #ccc;
 }
 
+.product-detail-wrapper .description-container {
+    margin-top      : 30px;
+    border-radius   : 10px;
+    background-color: white;
+    text-transform  : capitalize;
+}
+
 .product-detail-wrapper .col-6 {}
 
 .product-detail-wrapper .product-info-container {

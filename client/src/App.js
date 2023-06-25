@@ -21,6 +21,7 @@ import UserInfo from "./pages/user/UserInfo";
 import Brands from "./pages/admin/Brands";
 import ProductBrand from "./pages/ProductsBrand";
 import ProductDetail from "./pages/ProductDetail";
+import Cart from "./pages/Cart";
 function App() {
   return (
     <>
@@ -43,6 +44,7 @@ function App() {
           <Route path="users" element={<Users />}></Route>
           <Route path="users/create-user" element={<CreateUser />}></Route>
         </Route>
+        <Route path="/cart" element={<Cart />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route path="/about" element={<About />}></Route>

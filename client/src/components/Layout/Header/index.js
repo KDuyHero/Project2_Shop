@@ -26,6 +26,7 @@ function Header() {
     limit: null,
     sort: "-discount",
   });
+  const [numberOfProduct, setNumberOfProduct] = useState(0);
   const [brands, setBrands] = useState([]);
 
   const getAllBrands = async () => {
@@ -39,9 +40,28 @@ function Header() {
       toast.error("Get error in get all brand with header");
     }
   };
+
+  const getNumberOfCart = async () => {
+    if (auth?.token) {
+      let response = await axios.get("/users/cart", {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      if (response?.data?.success) {
+        setNumberOfProduct(response?.data?.cart?.products.length);
+      }
+    } else {
+      setNumberOfProduct(0);
+    }
+  };
   useEffect(() => {
     getAllBrands();
   }, []);
+
+  useEffect(() => {
+    getNumberOfCart();
+  }, [auth.cart]);
 
   const handleLogout = () => {
     setAuth({
@@ -49,7 +69,7 @@ function Header() {
       user: null,
       token: "",
     });
-    localStorage.removeItem("auth");
+    sessionStorage.removeItem("auth");
   };
 
   const handleSearch = (event) => {
@@ -178,7 +198,8 @@ function Header() {
 
               <li className="nav-item">
                 <NavLink to="/cart" className="nav-link ">
-                  <FontAwesomeIcon icon={faCartShopping} /> Cart(0)
+                  <FontAwesomeIcon icon={faCartShopping} /> Cart(
+                  {numberOfProduct})
                 </NavLink>
               </li>
             </ul>

@@ -16,6 +16,10 @@ body {
 
 }
 
+.container-fluid {
+  padding: 0;
+}
+
 .row {
   margin: 16px 0 0 0;
 }

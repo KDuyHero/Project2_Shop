@@ -170,7 +170,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
         <label htmlFor="descriptionInput" className="form-label fw-bold">
           Description
         </label>
-        <input
+        <textarea
           type="text"
           value={initForm.description}
           onChange={(e) =>
@@ -182,7 +182,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
           id="descriptionInput"
           placeholder="Enter product description"
           required
-        />
+        ></textarea>
       </div>
       {/* select multi category */}
       <div className="mb-3">

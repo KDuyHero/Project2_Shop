@@ -1,10 +1,10 @@
 import { toast } from "react-hot-toast";
-import axios from "../../axios";
+import axios from "../../../../axios";
 import { useEffect, useState, useRef } from "react";
-import { useAuth } from "../../context/auth";
-import ProductForm from "../Forms/ProductForm";
-import UserForm from "../Forms/UserForm";
-function Modal({ instance, object = null, method, setObject }) {
+import { useAuth } from "../../../../context/auth";
+import ProductForm from "../../../Forms/ProductForm";
+import UserForm from "../../../Forms/UserForm";
+function ModalDashboard({ instance, object = null, method, setObject }) {
   const [auth, setAuth] = useAuth();
   const [newName, setNewName] = useState("");
   const submitRef = useRef();
@@ -267,4 +267,4 @@ function Modal({ instance, object = null, method, setObject }) {
   );
 }
 
-export default Modal;
+export default ModalDashboard;

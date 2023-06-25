@@ -5,7 +5,7 @@ import axios from "../../axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import CategoryForm from "../../components/Forms/CategoryForm";
-import Modal from "../../components/Layout/Modal";
+import ModalDashboard from "../../components/Atoms/Modal/ModalDashboard";
 function Categories() {
   const [categories, setCategories] = useState([]);
   const [nameInput, setNameInput] = useState("");
@@ -104,7 +104,7 @@ function Categories() {
               </tbody>
             </table>
 
-            <Modal
+            <ModalDashboard
               instance="category"
               object={object}
               method={method}

@@ -22,7 +22,7 @@ function Login({ path = null }) {
           user: res.data.user,
           token: res.data.access_token,
         });
-        localStorage.setItem("auth", JSON.stringify(res.data));
+        sessionStorage.setItem("auth", JSON.stringify(res.data));
         navigate(path || "/");
       } else toast.error(res?.data);
     } catch (error) {

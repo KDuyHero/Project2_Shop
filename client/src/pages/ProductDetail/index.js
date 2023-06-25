@@ -6,9 +6,12 @@ import { toast } from "react-hot-toast";
 import "./ProductDetail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGear, faStar } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "../../context/auth";
+import ModalBuyNow from "../../components/Atoms/Modal/ModalBuyNow";
 
 function ProductDetail() {
   const params = useParams();
+  const [auth, setAuth] = useAuth();
   const [currentProduct, setCurrentProduct] = useState(null);
   const [currentImage, setCurrentImage] = useState(null);
   const [comment, setComment] = useState("");
@@ -24,6 +27,7 @@ function ProductDetail() {
     memory: "GB",
     ram: "GB",
   };
+
   const getCurrentProduct = async () => {
     const response = await axios.get(`/products/${params.productId}`);
     if (response?.data?.success) {
@@ -54,6 +58,53 @@ function ProductDetail() {
     return domain + url;
   };
 
+  const handleBuyNow = () => {
+    if (!auth?.user) {
+      toast.error("Bạn cần đăng nhập", {
+        duration: 1000,
+      });
+      return;
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!auth?.user) {
+      toast.error("Bạn cần đăng nhập", {
+        duration: 1000,
+      });
+      return;
+    }
+
+    try {
+      let response = await axios.post(
+        "/carts/add",
+        {
+          product: currentProduct._id,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${auth?.token}`,
+          },
+        }
+      );
+
+      console.log("response:", response);
+
+      if (response?.data?.success) {
+        console.log(response?.data?.cart);
+        setAuth({
+          ...auth,
+          cart: !auth.cart,
+        });
+        alert("Thêm sản phẩm thành công");
+      }
+    } catch (error) {
+      console.log(error);
+      alert("Get error when add to cart");
+    }
+  };
+
   const handleComment = () => {
     console.log(comment);
     setComment("");
@@ -81,7 +132,7 @@ function ProductDetail() {
           <>
             {/* Product detail  */}
             <div className="row container-fluid justify-content-between">
-              <div className="col-12 col-md-6 col-lg-6">
+              <div className="col-12 col-md-5 col-lg-5">
                 <div className="product-image-container container-fluid bottom-shadow">
                   <div
                     className="image-show"
@@ -109,22 +160,11 @@ function ProductDetail() {
                       })}
                   </div>
                 </div>
-                <div className="row btn-group d-flex justify-content-around mb-3">
-                  <button
-                    className="col-4 bottom-shadow"
-                    style={{ padding: "10px", borderRadius: "10px", border: 0 }}
-                  >
-                    Mô tả chi tiết
-                  </button>
-                  <button
-                    className="col-4 bottom-shadow"
-                    style={{ padding: "10px", borderRadius: "10px", border: 0 }}
-                  >
-                    Đánh giá
-                  </button>
+                <div className="description-container d-flex p-3">
+                  {currentProduct.description}
                 </div>
               </div>
-              <div className="col-12 col-md-6 col-lg-6">
+              <div className="col-12 col-md-7 col-lg-7">
                 {/* Info current product */}
                 <div className="product-info-container container-fluid bottom-shadow">
                   {/* base info like (name, price, quantity) */}
@@ -156,10 +196,22 @@ function ProductDetail() {
                       {currentProduct.quantity > 0 ? "Còn hàng" : "Hết hàng"}
                     </p>
                     <div className="btn-container">
-                      <button className="btn btn-danger p-2 me-3 mb-2">
+                      <button
+                        className="btn btn-danger p-2 me-3"
+                        data-bs-toggle={auth?.token ? "modal" : undefined}
+                        data-bs-target={
+                          auth?.token ? "#modal-buy-now" : undefined
+                        }
+                        onClick={() => {
+                          handleBuyNow();
+                        }}
+                      >
                         Mua ngay
                       </button>
-                      <button className="btn btn-primary p-2">
+                      <button
+                        className="btn btn-primary p-2"
+                        onClick={() => handleAddToCart()}
+                      >
                         Thêm vào giỏ hàng
                       </button>
                     </div>
@@ -258,6 +310,8 @@ function ProductDetail() {
           </>
         )}
       </div>
+
+      <ModalBuyNow product={currentProduct} />
     </Layout>
   );
 }

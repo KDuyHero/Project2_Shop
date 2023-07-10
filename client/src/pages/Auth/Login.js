@@ -52,7 +52,7 @@ function Login({ path = null }) {
 
           <div className="mb-3 form-group">
             <label htmlFor="passwordInput" className="form-label">
-              Passowrd
+              Password
             </label>
             <input
               type="password"

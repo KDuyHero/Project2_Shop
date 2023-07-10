@@ -12,9 +12,12 @@ Nodejs, React, Mongodb,...
 
 Download and install [nodejs](https://nodejs.org/en/download)
 
-### Install mongodb compass
+### Install mongodb and GUI tool
 
-Download and install [mongodb compass](https://www.mongodb.com/try/download/compass)
+Download and install [MongoDB Community Server](https://www.mongodb.com/try/download/community) (contain MongoDB Compass)
+
+If don't have MongoDB Compass:
+Download and install [MongoDB Compass](https://www.mongodb.com/try/download/compass)
 
 ### Setup database
 

@@ -16,13 +16,12 @@ function Register() {
     e.preventDefault();
     const userInfo = { firstName, lastName, userName, email, password };
     try {
-      const res = await axios.post("/users/signup", userInfo);
+      const res = await axios.post("/api/users/signup", userInfo);
       if (res.data.success) {
         toast.success("Register successfully");
         navigate("/login");
       } else toast.error(res.data);
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong");
     }
   };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "http://localhost:8080/api",
+  baseURL: process.env.REACT_APP_BACKEND_DOMAIN,
   timeout: 300000,
   withCredentials: true,
 });
@@ -33,7 +33,6 @@ instance.interceptors.response.use(
           const { access_token } = res.data;
           // after has newToken
           if (access_token) {
-            console.log("accesstoken: ", access_token);
             config.headers.Authorization = "Bearer " + access_token;
             // save new token
             let auth = JSON.parse(localStorage.getItem("auth"));
@@ -43,12 +42,10 @@ instance.interceptors.response.use(
             };
             localStorage.setItem("auth", JSON.stringify(auth));
 
-            console.log("new access token: ", access_token);
             // call prev api
             return instance(config);
           }
         } catch (error) {
-          console.log(error);
           return;
         }
       }

@@ -11,7 +11,7 @@ function AdminRoute() {
 
   useEffect(() => {
     const authCheck = async () => {
-      const res = await axios.get("/is-admin", {
+      const res = await axios.get("/api/is-admin", {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },

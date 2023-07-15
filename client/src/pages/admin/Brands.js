@@ -19,7 +19,7 @@ function Brands() {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "/brands",
+        "/api/brands",
         {
           name: nameInput,
         },
@@ -35,19 +35,17 @@ function Brands() {
         setNameInput("");
       } else toast.error(response?.data);
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong in submit form brand");
     }
   };
   // get category in useeffect
   const getAllBrands = async () => {
     try {
-      const response = await axios.get("/brands");
+      const response = await axios.get("/api/brands");
       if (response?.data?.success) {
         setBrands(response.data.brands);
       }
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong in getting all brands");
     }
   };
@@ -90,7 +88,6 @@ function Brands() {
                           data-bs-toggle="modal"
                           data-bs-target="#modal"
                           onClick={() => {
-                            console.log(brand);
                             setObject(brand);
                             setMethod("update");
                           }}
@@ -102,7 +99,6 @@ function Brands() {
                           data-bs-toggle="modal"
                           data-bs-target="#modal"
                           onClick={() => {
-                            console.log(brand);
                             setObject(brand);
                             setMethod("delete");
                           }}

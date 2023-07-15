@@ -11,6 +11,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/auth";
+import { toast } from "react-hot-toast";
 
 function Cart() {
   const navigate = useNavigate();
@@ -28,13 +29,12 @@ function Cart() {
   };
 
   const getImageUrl = (url) => {
-    const domain = "http://localhost:8080";
-    return domain + url;
+    return process.env.REACT_APP_BACKEND_DOMAIN + url;
   };
 
   const getCart = async () => {
     try {
-      let response = await axios.get("/users/cart", {
+      let response = await axios.get("/api/users/cart", {
         headers: {
           Authorization: `Bearer ${auth.token}`,
         },
@@ -55,7 +55,6 @@ function Cart() {
       } else {
       }
     } catch (error) {
-      console.log(error);
       setCart([]);
       setTotalPrice(0);
     }
@@ -64,7 +63,7 @@ function Cart() {
   const handleDeleteProduct = async (item, quantity) => {
     try {
       let response = await axios.post(
-        "/carts/remove",
+        "/api/carts/remove",
         {
           product: item.product._id,
           quantity: quantity,
@@ -83,18 +82,35 @@ function Cart() {
         });
 
         getCart();
+        return true;
       } else {
-        console.log(response);
-        alert("get error");
+        toast.error("Có lỗi xảy ra, xóa sản phẩm không thành công!");
+        return false;
       }
     } catch (error) {
-      console.log(error);
-      alert("get error in remove product");
+      toast.error("Có lỗi xảy ra, xóa sản phẩm không thành công!");
+      return false;
     }
   };
 
   const handleApplyCoupon = () => {};
-  const handleOrder = () => {};
+  const handleOrder = async () => {
+    try {
+      let response = await axios.post("/api/carts/remove-all", null, {
+        headers: {
+          Authorization: `Bearer ${auth?.token}`,
+        },
+      });
+      if (response?.data?.success) {
+        toast.success("Mua hàng thành công!");
+        getCart();
+      } else {
+        toast.error("Mua hàng thất bại!");
+      }
+    } catch (error) {
+      toast.error("Mua hàng thất bại!");
+    }
+  };
 
   useEffect(() => {
     getCart();
@@ -138,7 +154,6 @@ function Cart() {
                   </thead>
                   <tbody>
                     {cart?.map((cartItem, index) => {
-                      console.log("cart:", cart);
                       let realPrice =
                         (cartItem?.product?.price *
                           (100 - cartItem.product.discount)) /

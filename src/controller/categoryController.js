@@ -22,7 +22,6 @@ const createCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
       error,
@@ -50,7 +49,6 @@ const updateCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Error white update category",
@@ -68,7 +66,6 @@ const getAllCategories = async (req, res) => {
       categories,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Error when get category",
@@ -87,7 +84,6 @@ const getCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Error when get one category",
@@ -106,7 +102,6 @@ const deleteCategory = async (req, res) => {
       category,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Error when delete category",

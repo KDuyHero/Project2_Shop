@@ -31,19 +31,18 @@ function Header() {
 
   const getAllBrands = async () => {
     try {
-      const response = await axios.get("/brands");
+      const response = await axios.get("/api/brands");
       if (response?.data?.success) {
         setBrands(response.data.brands);
       }
     } catch (error) {
-      console.log(error);
       toast.error("Get error in get all brand with header");
     }
   };
 
   const getNumberOfCart = async () => {
     if (auth?.token) {
-      let response = await axios.get("/users/cart", {
+      let response = await axios.get("/api/users/cart", {
         headers: {
           Authorization: `Bearer ${auth?.token}`,
         },

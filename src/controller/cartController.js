@@ -127,4 +127,20 @@ let removeFromCart = async (req, res) => {
     return res.status(400).json({ error });
   }
 };
-module.exports = { addToCart, removeFromCart };
+
+let removeAll = async (req, res) => {
+  try {
+    let cart = await CartModel.findOne({ orderBy: req.userId }).exec();
+    // has cart
+    if (cart) {
+      cart.products = [];
+      await cart.save();
+    }
+    return res.status(201).json({
+      success: true,
+    });
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
+};
+module.exports = { addToCart, removeFromCart, removeAll };

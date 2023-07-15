@@ -12,11 +12,11 @@ const verifyToken = async (req, res, next) => {
       req.userId = decode._id;
       next();
     } else {
-      return res.status(200).json("No authorization header");
+      return res.status(401).json("No authorization header");
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return res.status(200).json({
+      return res.status(402).json({
         code: 401,
         message: "jwt expired",
       });

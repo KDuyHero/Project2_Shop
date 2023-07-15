@@ -110,7 +110,6 @@ let Signup = async (req, res) => {
   // get data from req.body
   const { firstName, lastName, userName, email, password } = req.body;
   try {
-    console.log(firstName, lastName, userName, email, password);
     // validate in server side
     if (!firstName || !lastName || !userName || !email || !password)
       return res.status(200).json("All fields are required");
@@ -137,7 +136,6 @@ let Signup = async (req, res) => {
       userInfo: { firstName, lastName, userName, email },
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "error",
       error,
@@ -159,7 +157,6 @@ let getUser = async (req, res) => {
       user: foundUser,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Something went wrong!",
       error,
@@ -178,7 +175,6 @@ let getAllUsers = async (req, res) => {
       users: users,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Something went wrong!",
       error,
@@ -207,7 +203,6 @@ let getCart = async (req, res) => {
       cart,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "something wrong in get cart",
       error,
@@ -230,7 +225,6 @@ let updateUser = async (req, res) => {
       newUser,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "error",
       error,
@@ -248,7 +242,6 @@ let deleteUser = async (req, res) => {
       message: "Delete user successful!",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       messsage: "error",
       error,
@@ -264,7 +257,6 @@ const handleLogout = async () => {
       message: "OK",
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Error",
       error,

@@ -16,7 +16,7 @@ function HomePage() {
   const getHotProducts = async () => {
     // get 4 products has the best discount
     const response = await axios.get(
-      "/products?categories=hot sale&sort=-discount&limit=4"
+      "/api/products?categories=hot sale&sort=-discount&limit=4"
     );
     if (response?.data?.products) {
       setHotProducts(response.data.products);
@@ -25,7 +25,7 @@ function HomePage() {
 
   const getIphoneProducts = async () => {
     // Get 8 products of iphone
-    const response = await axios.get("/products?brand=iphone&limit=8");
+    const response = await axios.get("/api/products?brand=iphone&limit=8");
     if (response?.data?.success) {
       setIphoneProducts(response.data.products);
     }
@@ -33,7 +33,7 @@ function HomePage() {
 
   const getSamsungProducts = async () => {
     // Get 8 products of samsung
-    const response = await axios.get("/products?brand=samsung&limit=8");
+    const response = await axios.get("/api/products?brand=samsung&limit=8");
     if (response?.data?.success) {
       setSamsungProducts(response.data.products);
     }

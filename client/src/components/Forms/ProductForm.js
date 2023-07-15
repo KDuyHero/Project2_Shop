@@ -46,7 +46,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
           formData.append(key, initForm[key]);
         }
 
-        const response = await axios.post("/products", formData, {
+        const response = await axios.post("/api/products", formData, {
           headers: {
             Authorization: "Bearer " + auth?.token,
           },
@@ -68,11 +68,15 @@ function ProductForm({ product = null, setObject, submitRef }) {
         }
 
         formData.append("deleteImage", deleteImage);
-        const response = await axios.put(`/products/${product._id}`, formData, {
-          headers: {
-            Authorization: "Bearer " + auth?.token,
-          },
-        });
+        const response = await axios.put(
+          `/api/products/${product._id}`,
+          formData,
+          {
+            headers: {
+              Authorization: "Bearer " + auth?.token,
+            },
+          }
+        );
         if (response?.data?.success) {
           toast.success("Update sản phẩm thành công");
           setObject(null);
@@ -82,31 +86,28 @@ function ProductForm({ product = null, setObject, submitRef }) {
         }
       }
     } catch (error) {
-      console.log(error);
       toast.error("Something went wrong in create product");
     }
   };
 
   const getAllBrands = async () => {
     try {
-      const response = await axios.get("/brands");
+      const response = await axios.get("/api/brands");
       if (response?.data?.success) {
         setBrands(response.data.brands);
       } else toast.error(response?.data);
     } catch (error) {
-      console.log(error);
       toast.error("Something wrong in get all brands");
     }
   };
 
   const getAllCategory = async () => {
     try {
-      const response = await axios.get("/categories");
+      const response = await axios.get("/api/categories");
       if (response?.data?.success) {
         setCategories(response.data.categories);
       } else toast.error(response?.data);
     } catch (error) {
-      console.log(error);
       toast.error("Something wrong in get all brands");
     }
   };

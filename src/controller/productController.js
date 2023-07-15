@@ -1,6 +1,5 @@
 const fs = require("fs");
 const ProductModel = require("../models/ProductModel");
-const { cloudinaryUploadImg } = require("../utils/cloudinary");
 // GET /
 
 const getAllProducts = async (req, res) => {
@@ -70,7 +69,6 @@ let getProduct = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: "error",
       error,
@@ -120,7 +118,6 @@ let createProduct = async (req, res) => {
       product: product,
     });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({
       message: "error",
       error,
@@ -185,8 +182,6 @@ let updateProduct = async (req, res) => {
     // end solve image
     data.categories = categories.split(",");
 
-    console.log(data);
-
     let newProduct = await ProductModel.findByIdAndUpdate(productId, data, {
       new: true,
     });
@@ -196,7 +191,6 @@ let updateProduct = async (req, res) => {
       newProduct,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "error",
       error,

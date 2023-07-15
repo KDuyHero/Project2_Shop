@@ -9,7 +9,6 @@ const getAllBrands = async (req, res) => {
       brands,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in get all Brands",
       error,
@@ -28,7 +27,6 @@ const createBrand = async (req, res) => {
       newBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in create brand",
       error,
@@ -45,7 +43,6 @@ const getBrand = async (req, res) => {
       brand: foundBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in get brand",
       error,
@@ -65,7 +62,6 @@ const updateBrand = async (req, res) => {
       updateBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in update brand",
       error,
@@ -86,7 +82,6 @@ const deleteBrand = async (req, res) => {
       deleteBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in delete brand",
       error,

@@ -4,12 +4,9 @@ const categoryModel = require("../models/CategoryModel");
 const createCategory = async (req, res) => {
   try {
     const { name } = req.body;
-    if (!name)
-      return res.status(200).json({
-        message: "Name is required",
-      });
+    if (!name) return res.status(200).json("name is required");
     const existCategory = await categoryModel.findOne({ name });
-    if (existCategory) return res.status(200).json("Category already exist");
+    if (existCategory) return res.status(200).json("category already exist");
 
     const category = await new categoryModel({
       name,
@@ -23,7 +20,6 @@ const createCategory = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({
-      success: false,
       error,
       message: "Error in category",
     });
@@ -36,7 +32,7 @@ const updateCategory = async (req, res) => {
     const { categoryId } = req.params;
 
     const foundCategory = await categoryModel.findOne({ name });
-    if (foundCategory) return res.status(200).json("This name was exist");
+    if (foundCategory) return res.status(200).json("This name already exist");
 
     const category = await categoryModel.findByIdAndUpdate(
       categoryId,
@@ -50,7 +46,6 @@ const updateCategory = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
       message: "Error white update category",
       error,
     });
@@ -67,7 +62,6 @@ const getAllCategories = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
       message: "Error when get category",
       error,
     });
@@ -85,7 +79,6 @@ const getCategory = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
       message: "Error when get one category",
       error,
     });
@@ -103,7 +96,6 @@ const deleteCategory = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
       message: "Error when delete category",
       error,
     });

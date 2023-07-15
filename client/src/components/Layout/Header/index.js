@@ -36,15 +36,15 @@ function Header() {
         setBrands(response.data.brands);
       }
     } catch (error) {
-      toast.error("Get error in get all brand with header");
+      toast.error("Get all brands fail");
     }
   };
 
   const getNumberOfCart = async () => {
-    if (auth?.token) {
+    if (auth?.token ? auth.token : "") {
       let response = await axios.get("/api/users/cart", {
         headers: {
-          Authorization: `Bearer ${auth?.token}`,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {

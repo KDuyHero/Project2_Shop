@@ -13,7 +13,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       if (instance === "category") {
         const response = await axios.delete(`/api/categories/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -25,7 +25,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       if (instance === "brand") {
         const response = await axios.delete(`/api/brands/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -37,7 +37,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       if (instance === "product") {
         const response = await axios.delete(`/api/products/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -49,7 +49,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       if (instance === "user") {
         const response = await axios.delete(`/api/users/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -60,7 +60,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
         setObject(null);
       }
     } catch (error) {
-      toast.error(`Something went wrong in delete ${instance}`);
+      toast.error(`Delete ${instance} fail`);
     }
   };
   const handleUpdate = async () => {
@@ -73,7 +73,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
           },
           {
             headers: {
-              Authorization: "Bearer " + auth?.token,
+              Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
             },
           }
         );
@@ -93,7 +93,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
           },
           {
             headers: {
-              Authorization: "Bearer " + auth?.token,
+              Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
             },
           }
         );
@@ -113,7 +113,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
         submitRef.current.click();
       }
     } catch (error) {
-      toast.error(`something went wrong in update ${instance}`);
+      toast.error(`Update ${instance} fail`);
     }
   };
 

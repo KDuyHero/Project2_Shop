@@ -25,17 +25,17 @@ function Brands() {
         },
         {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         }
       );
       if (response?.data?.success) {
-        toast.success(`Create category ${nameInput} successfully`);
+        toast.success(`Create brand ${nameInput} successfully`);
         setBrands([...brands, response.data.newBrand]);
         setNameInput("");
       } else toast.error(response?.data);
     } catch (error) {
-      toast.error("Something went wrong in submit form brand");
+      toast.error("Create brand fail");
     }
   };
   // get category in useeffect
@@ -46,7 +46,7 @@ function Brands() {
         setBrands(response.data.brands);
       }
     } catch (error) {
-      toast.error("Something went wrong in getting all brands");
+      toast.error("Get all brands fail");
     }
   };
 

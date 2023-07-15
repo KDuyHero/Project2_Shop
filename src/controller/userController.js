@@ -45,6 +45,7 @@ const refreshToken = async (req, res) => {
   } catch (error) {
     return res.status(500).json({
       message: "Error went refresh token, go to login",
+      error,
     });
   }
 };
@@ -56,7 +57,7 @@ let Signin = async (req, res) => {
     // find user
     let user = await UserModel.findOne({ userName });
     // check user ? exist
-    if (!user) return res.status(200).json("User is not exist");
+    if (!user) return res.status(200).json("User not exist");
     // check password
     if (!user.isPasswordMatched(password))
       return res.status(200).json("Wrong password");
@@ -99,7 +100,6 @@ let Signin = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: "error in backend",
       error,
     });
   }
@@ -119,9 +119,9 @@ let Signup = async (req, res) => {
     //   return res.status(200).json("Password must be strong");
     // find user to check exist
     let foundUser = await UserModel.findOne({ email });
-    if (foundUser) return res.status(200).json("Email was exist");
+    if (foundUser) return res.status(200).json("Email already exist");
     foundUser = await UserModel.findOne({ userName });
-    if (foundUser) return res.status(200).json("UserName was exist");
+    if (foundUser) return res.status(200).json("UserName already exist");
 
     // create and save new user
     let newUser = new UserModel(req.body);
@@ -150,7 +150,7 @@ let getUser = async (req, res) => {
     let userId = req?.params?.userId;
     // if user is user in token
     const foundUser = await UserModel.findById(userId);
-    if (!foundUser) return res.stauts(200).json("Không tìm thấy user này");
+    if (!foundUser) return res.stauts(200).json("User not found");
     return res.status(200).json({
       success: true,
       message: "OK",
@@ -195,7 +195,7 @@ let getCart = async (req, res) => {
         products: [],
       });
       await newCart.save();
-      return res.status(200).json("cart not found");
+      return res.status(200).json("Cart not found");
     }
     return res.status(200).json({
       success: true,
@@ -214,7 +214,7 @@ let updateUser = async (req, res) => {
   try {
     let { firstName, lastName, email } = req.body;
     if (!firstName || !lastName || !email)
-      return res.status(200).json("firstName, lastName or Email is empty");
+      return res.status(200).json("firstName, lastName or email is empty");
     let userId = req.params.userId;
     let newUser = await UserModel.findByIdAndUpdate(userId, req.body, {
       new: true,

@@ -48,7 +48,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
 
         const response = await axios.post("/api/products", formData, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
 
@@ -73,20 +73,20 @@ function ProductForm({ product = null, setObject, submitRef }) {
           formData,
           {
             headers: {
-              Authorization: "Bearer " + auth?.token,
+              Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
             },
           }
         );
         if (response?.data?.success) {
-          toast.success("Update sản phẩm thành công");
+          toast.success("Update product successfully");
           setObject(null);
           setDeleteImage(null);
         } else {
-          toast.error(response.data);
+          toast.error(response?.data);
         }
       }
     } catch (error) {
-      toast.error("Something went wrong in create product");
+      toast.error("Failure");
     }
   };
 
@@ -97,7 +97,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
         setBrands(response.data.brands);
       } else toast.error(response?.data);
     } catch (error) {
-      toast.error("Something wrong in get all brands");
+      toast.error("Get all brands fail");
     }
   };
 
@@ -108,7 +108,7 @@ function ProductForm({ product = null, setObject, submitRef }) {
         setCategories(response.data.categories);
       } else toast.error(response?.data);
     } catch (error) {
-      toast.error("Something wrong in get all brands");
+      toast.error("Get all categories fail");
     }
   };
 

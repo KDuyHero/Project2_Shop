@@ -54,7 +54,7 @@ const updateBrand = async (req, res) => {
     const { name } = req.body;
     const { brandId } = req.params;
     const foundBrand = await brandModel.findOne({ name });
-    if (foundBrand) return res.status(200).json("Tên brand này đã tồn tại");
+    if (foundBrand) return res.status(200).json("Brand name already exist");
     const updateBrand = await brandModel.findByIdAndUpdate(brandId, { name });
     return res.status(200).json({
       success: true,
@@ -73,7 +73,7 @@ const deleteBrand = async (req, res) => {
     const { brandId } = req.params;
     const foundBrand = await brandModel.findById(brandId);
 
-    if (!foundBrand) return res.status(200).json("brand không tồn tại");
+    if (!foundBrand) return res.status(200).json("brand not found");
 
     const deleteBrand = await brandModel.findByIdAndDelete(brandId);
     return res.status(200).json({

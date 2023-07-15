@@ -7,16 +7,20 @@ const verifyToken = async (req, res, next) => {
     const authorization =
       req.headers.authorization || req.headers.Authorization;
     if (authorization?.startsWith("Bearer ")) {
-      const token = authorization.split(" ")[1];
-      const decode = await jwt.verify(token, process.env.ACCESS_KEY);
-      req.userId = decode._id;
-      next();
+      let token = authorization.split(" ")[1];
+      if (!token) {
+        return res.status(200).json("You need to login");
+      } else {
+        const decode = await jwt.verify(token, process.env.ACCESS_KEY);
+        req.userId = decode._id;
+        next();
+      }
     } else {
-      return res.status(401).json("No authorization header");
+      return res.status(200).json("You need to login");
     }
   } catch (error) {
     if (error.name === "TokenExpiredError") {
-      return res.status(402).json({
+      return res.status(200).json({
         code: 401,
         message: "jwt expired",
       });
@@ -32,14 +36,14 @@ const verifyToken = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   try {
     const userId = req?.userId;
-    if (!userId) return res.status(200).json("No id from token");
+    if (!userId) return res.status(200).json("You need to login");
 
     const user = await UserModel.findById(userId);
     // không tồn tại user
     if (!user)
-      return res.status(200).json("No user match with userId in isAdmin");
+      return res.status(200).json("User not found, need to login again");
     //   Không có field role hoặc role không phải admin
-    if (!user.isAdmin) return res.status(200).json("You are not admin");
+    if (!user.isAdmin) return res.status(200).json("Not permission");
     // isAdmin
     next();
   } catch (error) {

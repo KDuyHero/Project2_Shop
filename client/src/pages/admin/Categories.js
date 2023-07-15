@@ -25,7 +25,7 @@ function Categories() {
         setNameInput("");
       } else toast.error(response?.data);
     } catch (error) {
-      toast.error("Something went wrong in submit form category");
+      toast.error("Create category fail");
     }
   };
   // get category in useeffect
@@ -36,7 +36,7 @@ function Categories() {
         setCategories(response.data.categories);
       }
     } catch (error) {
-      toast.error("Something went wrong in getting all categories");
+      toast.error("Get all categories fail");
     }
   };
 

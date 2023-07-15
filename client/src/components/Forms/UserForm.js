@@ -22,13 +22,13 @@ function UserForm({ user = null, setObject, submitRef }) {
         const data = { ...initForm, password };
         const response = await axios.post("/api/users/signup", data);
         if (response?.data?.success) {
-          toast.success("Tạo tài khoản thành công!");
+          toast.success("Create successfully!");
         } else toast.error(response?.data);
       } else {
         // update
         const response = await axios.put(`/api/users/${user._id}`, initForm, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
 
@@ -40,7 +40,7 @@ function UserForm({ user = null, setObject, submitRef }) {
         }
       }
     } catch (error) {
-      toast.error("Something went wrong in submit form user");
+      toast.error("Failure");
     }
   };
 

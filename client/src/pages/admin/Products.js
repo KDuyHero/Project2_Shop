@@ -17,16 +17,16 @@ function Products() {
     try {
       const response = await axios.get("/api/products", {
         headers: {
-          Authorization: "Bearer " + auth?.token,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {
         setProducts(response.data.products);
       } else {
-        toast.error(response.data);
+        toast.error(response?.data);
       }
     } catch (error) {
-      toast.error("Something went wrong in get all products");
+      toast.error("Get all products fail");
     }
   };
 

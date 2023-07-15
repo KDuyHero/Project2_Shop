@@ -50,7 +50,7 @@ function ProductDetail() {
 
   const handleBuyNow = () => {
     if (!auth?.user) {
-      toast.error("Bạn cần đăng nhập", {
+      toast.error("You need to login", {
         duration: 1000,
       });
       return;
@@ -74,21 +74,21 @@ function ProductDetail() {
         },
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         }
       );
-      console.log("response:", response);
-
       if (response?.data?.success) {
         setAuth({
           ...auth,
           cart: !auth.cart,
         });
-        toast.success("Đã thêm vào giỏ hàng!");
+        toast.success("Add to cart successfully!");
+      } else {
+        toast.error(response.data);
       }
     } catch (error) {
-      toast("Thêm sản phẩm thất bại");
+      toast.error("Add to cart fail!");
     }
   };
 
@@ -183,9 +183,15 @@ function ProductDetail() {
                     <div className="btn-container">
                       <button
                         className="btn btn-danger p-2 me-3"
-                        data-bs-toggle={auth?.token ? "modal" : undefined}
+                        data-bs-toggle={
+                          auth?.token ? auth.token : "" ? "modal" : undefined
+                        }
                         data-bs-target={
-                          auth?.token ? "#modal-buy-now" : undefined
+                          auth?.token
+                            ? auth.token
+                            : ""
+                            ? "#modal-buy-now"
+                            : undefined
                         }
                         onClick={() => {
                           handleBuyNow();

@@ -33,6 +33,8 @@
     "sequelize": "^6.31.0",
     "sharp": "^0.32.1",
     "slugify": "^1.6.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "validation": "0.0.1"
   }
 }

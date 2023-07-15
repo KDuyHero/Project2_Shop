@@ -26,7 +26,7 @@ function Login({ path = null }) {
         navigate(path || "/");
       } else toast.error(res?.data);
     } catch (error) {
-      toast.error("Something went wrong");
+      toast.error("Login fail");
     }
   };
   return (

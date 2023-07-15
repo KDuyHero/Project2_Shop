@@ -36,7 +36,7 @@ function Cart() {
     try {
       let response = await axios.get("/api/users/cart", {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {
@@ -53,6 +53,7 @@ function Cart() {
           }, 0)
         );
       } else {
+        toast.error(response.data);
       }
     } catch (error) {
       setCart([]);
@@ -70,7 +71,7 @@ function Cart() {
         },
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         }
       );
@@ -82,14 +83,11 @@ function Cart() {
         });
 
         getCart();
-        return true;
       } else {
-        toast.error("Có lỗi xảy ra, xóa sản phẩm không thành công!");
-        return false;
+        toast.error(response.data);
       }
     } catch (error) {
-      toast.error("Có lỗi xảy ra, xóa sản phẩm không thành công!");
-      return false;
+      toast.error("Remove product fail");
     }
   };
 
@@ -98,17 +96,17 @@ function Cart() {
     try {
       let response = await axios.post("/api/carts/remove-all", null, {
         headers: {
-          Authorization: `Bearer ${auth?.token}`,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {
-        toast.success("Mua hàng thành công!");
+        toast.success("Payment successfully!");
         getCart();
       } else {
-        toast.error("Mua hàng thất bại!");
+        toast.error(response.data);
       }
     } catch (error) {
-      toast.error("Mua hàng thất bại!");
+      toast.error("Payment fail!");
     }
   };
 

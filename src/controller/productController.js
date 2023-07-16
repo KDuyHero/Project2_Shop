@@ -145,11 +145,12 @@ let updateProduct = async (req, res) => {
       ram,
       deleteImage,
     } = req.body;
-
-    deleteImage = deleteImage.split(",");
-    deleteImage.forEach((url) => {
-      fs.unlinkSync(``);
-    });
+    if (deleteImage) {
+      deleteImage = deleteImage.split(",");
+      deleteImage.forEach((url) => {
+        fs.unlinkSync(`${__dirname}/../public${url}`);
+      });
+    }
     let data = {
       name,
       description,

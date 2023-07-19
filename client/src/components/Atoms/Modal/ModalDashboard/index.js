@@ -236,7 +236,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Cancer
+              Cancel
             </button>
             {method === "delete" && (
               <button

@@ -124,7 +124,7 @@ function ModalBuyNow({ product = null }) {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Cancer
+                Cancel
               </button>
               <button
                 type="button"

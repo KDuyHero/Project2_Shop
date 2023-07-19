@@ -34,7 +34,7 @@ function ModalNeedToLogin({ instance, object = null, method, setObject }) {
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Cancer
+              Cancel
             </button>
           </div>
         </div>

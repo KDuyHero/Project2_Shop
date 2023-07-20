@@ -7,6 +7,9 @@ import ListBanner from "../components/Layout/ListBanner";
 import { Link } from "react-router-dom";
 import { useSearch } from "../context/search";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faBoltLightning } from "@fortawesome/free-solid-svg-icons"
+
 function HomePage() {
   const [auth, setAuth] = useAuth();
   const [search, setSearch] = useSearch();
@@ -48,9 +51,9 @@ function HomePage() {
     <Layout title="Homepage">
       <div className="container g-0 homepage-wrapper">
         <ListBanner />
-        <div className="row mt-3 container-fluid block-content">
+        <div className="row mt-3 container-fluid block-content bg-danger borderRadius mb-5 p-3">
           <div className="block-content-title">
-            <h2>Khuyến mãi hot</h2>
+            <h2 className="text-warning"><FontAwesomeIcon icon={faBoltLightning}/> KHUYỄN MÃI HOT</h2>
             <Link to="/products/hot-sale">Xem tất cả</Link>
           </div>
           {hotProducts.map((product, index) => {
@@ -66,9 +69,9 @@ function HomePage() {
         </div>
 
         {iphoneProducts.length > 0 && (
-          <div className="row mt-3 container-fluid block-content">
+          <div className="row mt-3 container-fluid block-content mb-5 p-3">
             <div className="block-content-title">
-              <h2>Điện thoại Iphone</h2>
+              <h2 className="text-warning">ĐIỆN THOẠI IPHONE</h2>
               <Link to="/products/brands/iphone">Xem tất cả</Link>
             </div>
             {iphoneProducts.map((product, index) => {
@@ -85,9 +88,9 @@ function HomePage() {
         )}
 
         {samsungProducts.length > 0 && (
-          <div className="row mt-3 container-fluid block-content">
+          <div className="row mt-3 container-fluid block-content mb-5 p-3">
             <div className="block-content-title">
-              <h2>Điện thoại Samsung</h2>
+              <h2 className="text-warning">ĐIỆN THOẠI SAMSUNG</h2>
               <Link to="/products/brands/samsung">Xem tất cả</Link>
             </div>
             {samsungProducts.map((product, index) => {

@@ -23,8 +23,8 @@ function AdminRoute() {
         setOk(false);
       }
     };
-    if (auth?.token ? auth.token : "") authCheck();
-  }, [auth?.token ? auth.token : ""]);
+    if (auth?.token) authCheck();
+  }, [auth.token]);
   return ok ? <Outlet /> : <Spiner />;
 }
 

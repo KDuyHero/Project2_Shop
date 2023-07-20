@@ -43,10 +43,6 @@ function ModalBuyNow({ product = null }) {
               />
             </div>
             <div className="modal-body">
-              {/* <h3>
-                <FontAwesomeIcon icon={faBasketShopping} color="red" /> Giỏ hàng
-              </h3> */}
-
               <table className="table-borderless w-100">
                 <thead>
                   <tr>

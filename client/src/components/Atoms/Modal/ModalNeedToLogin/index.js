@@ -1,8 +1,4 @@
-import { toast } from "react-hot-toast";
-import axios from "../../../../axios";
-import { useEffect, useState, useRef } from "react";
 import { useAuth } from "../../../../context/auth";
-import Login from "../../../../pages/Auth/Login";
 function ModalNeedToLogin({ instance, object = null, method, setObject }) {
   const [auth, setAuth] = useAuth();
 

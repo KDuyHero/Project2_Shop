@@ -16,7 +16,7 @@ function Categories() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/categories", {
+      const response = await axios.post("/api/categories", {
         name: nameInput,
       });
       if (response?.data?.success) {
@@ -25,20 +25,18 @@ function Categories() {
         setNameInput("");
       } else toast.error(response?.data);
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong in submit form category");
+      toast.error("Create category fail");
     }
   };
   // get category in useeffect
   const getAllCategories = async () => {
     try {
-      const response = await axios.get("/categories");
+      const response = await axios.get("/api/categories");
       if (response?.data?.success) {
         setCategories(response.data.categories);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong in getting all categories");
+      toast.error("Get all categories fail");
     }
   };
 

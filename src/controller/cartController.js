@@ -106,11 +106,7 @@ let removeFromCart = async (req, res) => {
         });
       } else {
         // add product to cart
-
-        return res.status(200).json({
-          success: false,
-          message: "Don't found product",
-        });
+        return res.status(200).json("product not found");
       }
     } else {
       const newCart = new CartModel({
@@ -118,13 +114,29 @@ let removeFromCart = async (req, res) => {
         products: [],
       });
       await newCart.save();
-      return res.status(201).json({
+      return res.status(200).json({
         success: true,
         cart: newCart,
       });
     }
   } catch (error) {
-    return res.status(400).json({ error });
+    return res.status(500).json({ error });
   }
 };
-module.exports = { addToCart, removeFromCart };
+
+let removeAll = async (req, res) => {
+  try {
+    let cart = await CartModel.findOne({ orderBy: req.userId }).exec();
+    // has cart
+    if (cart) {
+      cart.products = [];
+      await cart.save();
+    }
+    return res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    return res.status(500).json({ error });
+  }
+};
+module.exports = { addToCart, removeFromCart, removeAll };

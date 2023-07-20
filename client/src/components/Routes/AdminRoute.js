@@ -11,20 +11,20 @@ function AdminRoute() {
 
   useEffect(() => {
     const authCheck = async () => {
-      const res = await axios.get("/is-admin", {
+      const res = await axios.get("/api/is-admin", {
         headers: {
-          Authorization: `Bearer ${auth?.token}`,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (res?.data?.ok) {
         setOk(true);
       } else {
-        toast.error(res.data);
+        toast.error(res?.data);
         setOk(false);
       }
     };
-    if (auth?.token) authCheck();
-  }, [auth?.token]);
+    if (auth?.token ? auth.token : "") authCheck();
+  }, [auth?.token ? auth.token : ""]);
   return ok ? <Outlet /> : <Spiner />;
 }
 

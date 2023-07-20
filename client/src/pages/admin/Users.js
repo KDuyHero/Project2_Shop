@@ -15,19 +15,18 @@ function Users() {
 
   const getAllUsers = async () => {
     try {
-      const response = await axios.get("/users", {
+      const response = await axios.get("/api/users", {
         headers: {
-          Authorization: "Bearer " + auth?.token,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {
         setUsers(response.data.users);
       } else {
-        toast.error(response.data);
+        toast.error(response?.data);
       }
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong in get all users");
+      toast.error("Get all users fail");
     }
   };
 

@@ -69,7 +69,6 @@ let getProduct = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       message: "error",
       error,
@@ -119,9 +118,7 @@ let createProduct = async (req, res) => {
       product: product,
     });
   } catch (error) {
-    console.log(error);
-    return res.status(400).json({
-      message: "error",
+    return res.status(500).json({
       error,
     });
   }
@@ -132,8 +129,7 @@ let updateProduct = async (req, res) => {
   try {
     let productId = req.params.productId;
     const foundProduct = await ProductModel.findById(productId);
-    if (!foundProduct)
-      return res.status(200).json("Sản phẩm này hiện không tồn tại");
+    if (!foundProduct) return res.status(200).json("This product not exist");
     let {
       name,
       description,
@@ -149,11 +145,12 @@ let updateProduct = async (req, res) => {
       ram,
       deleteImage,
     } = req.body;
-
-    deleteImage = deleteImage.split(",");
-    deleteImage.forEach((url) => {
-      fs.unlinkSync(``);
-    });
+    if (deleteImage) {
+      deleteImage = deleteImage.split(",");
+      deleteImage.forEach((url) => {
+        fs.unlinkSync(`${__dirname}/../public${url}`);
+      });
+    }
     let data = {
       name,
       description,
@@ -184,8 +181,6 @@ let updateProduct = async (req, res) => {
     // end solve image
     data.categories = categories.split(",");
 
-    console.log(data);
-
     let newProduct = await ProductModel.findByIdAndUpdate(productId, data, {
       new: true,
     });
@@ -195,9 +190,7 @@ let updateProduct = async (req, res) => {
       newProduct,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
-      message: "error",
       error,
     });
   }
@@ -214,8 +207,7 @@ let deleteProduct = async (req, res) => {
       productDelete,
     });
   } catch (error) {
-    return res.status(400).json({
-      message: "error",
+    return res.status(500).json({
       error,
     });
   }

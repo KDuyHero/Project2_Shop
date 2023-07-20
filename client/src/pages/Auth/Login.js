@@ -14,7 +14,7 @@ function Login({ path = null }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("/users/signin", { userName, password });
+      const res = await axios.post("/api/users/signin", { userName, password });
       if (res?.data?.success) {
         toast.success("Login successfully");
         setAuth({
@@ -26,8 +26,7 @@ function Login({ path = null }) {
         navigate(path || "/");
       } else toast.error(res?.data);
     } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong");
+      toast.error("Login fail");
     }
   };
   return (
@@ -52,7 +51,7 @@ function Login({ path = null }) {
 
           <div className="mb-3 form-group">
             <label htmlFor="passwordInput" className="form-label">
-              Passowrd
+              Password
             </label>
             <input
               type="password"

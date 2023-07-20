@@ -11,6 +11,7 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/auth";
+import { toast } from "react-hot-toast";
 
 function Cart() {
   const navigate = useNavigate();
@@ -28,15 +29,14 @@ function Cart() {
   };
 
   const getImageUrl = (url) => {
-    const domain = "http://localhost:8080";
-    return domain + url;
+    return process.env.REACT_APP_BACKEND_DOMAIN + url;
   };
 
   const getCart = async () => {
     try {
-      let response = await axios.get("/users/cart", {
+      let response = await axios.get("/api/users/cart", {
         headers: {
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
         },
       });
       if (response?.data?.success) {
@@ -53,9 +53,9 @@ function Cart() {
           }, 0)
         );
       } else {
+        toast.error(response.data);
       }
     } catch (error) {
-      console.log(error);
       setCart([]);
       setTotalPrice(0);
     }
@@ -64,14 +64,14 @@ function Cart() {
   const handleDeleteProduct = async (item, quantity) => {
     try {
       let response = await axios.post(
-        "/carts/remove",
+        "/api/carts/remove",
         {
           product: item.product._id,
           quantity: quantity,
         },
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         }
       );
@@ -84,17 +84,31 @@ function Cart() {
 
         getCart();
       } else {
-        console.log(response);
-        alert("get error");
+        toast.error(response.data);
       }
     } catch (error) {
-      console.log(error);
-      alert("get error in remove product");
+      toast.error("Remove product fail");
     }
   };
 
   const handleApplyCoupon = () => {};
-  const handleOrder = () => {};
+  const handleOrder = async () => {
+    try {
+      let response = await axios.post("/api/carts/remove-all", null, {
+        headers: {
+          Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
+        },
+      });
+      if (response?.data?.success) {
+        toast.success("Payment successfully!");
+        getCart();
+      } else {
+        toast.error(response.data);
+      }
+    } catch (error) {
+      toast.error("Payment fail!");
+    }
+  };
 
   useEffect(() => {
     getCart();
@@ -138,7 +152,6 @@ function Cart() {
                   </thead>
                   <tbody>
                     {cart?.map((cartItem, index) => {
-                      console.log("cart:", cart);
                       let realPrice =
                         (cartItem?.product?.price *
                           (100 - cartItem.product.discount)) /

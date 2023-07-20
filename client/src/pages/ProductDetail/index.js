@@ -29,19 +29,10 @@ function ProductDetail() {
   };
 
   const getCurrentProduct = async () => {
-    const response = await axios.get(`/products/${params.productId}`);
+    const response = await axios.get(`/api/products/${params.productId}`);
     if (response?.data?.success) {
       setCurrentProduct(response.data.product);
       setCurrentImage(response.data.product.images[0]);
-
-      // let ratings = response?.data?.product?.ratings || [];
-      // console.log(response.data.product);
-      // if (ratings.length !== 0) {
-      //   console.log(ratings);
-      //   let sum = ratings.reduce((sum, value) => sum + value, 0);
-      //   console.log(sum);
-      //   setRated(Math.ceil(sum / ratings.length));
-      // }
     } else toast.error(response.data);
   };
 
@@ -54,13 +45,12 @@ function ProductDetail() {
   };
 
   const getImageUrl = (url) => {
-    const domain = "http://localhost:8080";
-    return domain + url;
+    return process.env.REACT_APP_BACKEND_DOMAIN + url;
   };
 
   const handleBuyNow = () => {
     if (!auth?.user) {
-      toast.error("Bạn cần đăng nhập", {
+      toast.error("You need to login", {
         duration: 1000,
       });
       return;
@@ -68,45 +58,41 @@ function ProductDetail() {
   };
 
   const handleAddToCart = async () => {
-    if (!auth?.user) {
-      toast.error("Bạn cần đăng nhập", {
-        duration: 1000,
-      });
-      return;
-    }
+    // if (!auth?.user) {
+    //   toast.error("Bạn cần đăng nhập", {
+    //     duration: 1000,
+    //   });
+    //   return;
+    // }
 
     try {
       let response = await axios.post(
-        "/carts/add",
+        "/api/carts/add",
         {
           product: currentProduct._id,
           quantity: 1,
         },
         {
           headers: {
-            Authorization: `Bearer ${auth?.token}`,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         }
       );
-
-      console.log("response:", response);
-
       if (response?.data?.success) {
-        console.log(response?.data?.cart);
         setAuth({
           ...auth,
           cart: !auth.cart,
         });
-        alert("Thêm sản phẩm thành công");
+        toast.success("Add to cart successfully!");
+      } else {
+        toast.error(response.data);
       }
     } catch (error) {
-      console.log(error);
-      alert("Get error when add to cart");
+      toast.error("Add to cart fail!");
     }
   };
 
   const handleComment = () => {
-    console.log(comment);
     setComment("");
   };
 
@@ -119,7 +105,6 @@ function ProductDetail() {
   };
 
   const handleRated = (index) => {
-    alert(index + 1 + " star");
     setRated(index + 1);
   };
   useEffect(() => {
@@ -198,9 +183,15 @@ function ProductDetail() {
                     <div className="btn-container">
                       <button
                         className="btn btn-danger p-2 me-3"
-                        data-bs-toggle={auth?.token ? "modal" : undefined}
+                        data-bs-toggle={
+                          auth?.token ? auth.token : "" ? "modal" : undefined
+                        }
                         data-bs-target={
-                          auth?.token ? "#modal-buy-now" : undefined
+                          auth?.token
+                            ? auth.token
+                            : ""
+                            ? "#modal-buy-now"
+                            : undefined
                         }
                         onClick={() => {
                           handleBuyNow();

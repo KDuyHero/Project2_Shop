@@ -47,8 +47,7 @@ function Card({
   };
 
   const getImageUrl = (url) => {
-    const domain = "http://localhost:8080";
-    return domain + url;
+    return process.env.REACT_APP_BACKEND_DOMAIN + url;
   };
 
   const handleClickCard = () => {

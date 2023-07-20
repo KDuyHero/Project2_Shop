@@ -11,9 +11,9 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
   const handleDelete = async () => {
     try {
       if (instance === "category") {
-        const response = await axios.delete(`/categories/${object?._id}`, {
+        const response = await axios.delete(`/api/categories/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -23,9 +23,9 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       }
 
       if (instance === "brand") {
-        const response = await axios.delete(`/brands/${object?._id}`, {
+        const response = await axios.delete(`/api/brands/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -35,9 +35,9 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       }
 
       if (instance === "product") {
-        const response = await axios.delete(`/products/${object?._id}`, {
+        const response = await axios.delete(`/api/products/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -47,9 +47,9 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
       }
 
       if (instance === "user") {
-        const response = await axios.delete(`/users/${object?._id}`, {
+        const response = await axios.delete(`/api/users/${object?._id}`, {
           headers: {
-            Authorization: "Bearer " + auth?.token,
+            Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
           },
         });
         if (response?.data?.success) {
@@ -60,21 +60,20 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
         setObject(null);
       }
     } catch (error) {
-      console.log(error);
-      toast.error(`Something went wrong in delete ${instance}`);
+      toast.error(`Delete ${instance} fail`);
     }
   };
   const handleUpdate = async () => {
     try {
       if (instance === "category") {
         const response = await axios.put(
-          `/categories/${object?._id}`,
+          `/api/categories/${object?._id}`,
           {
             name: newName,
           },
           {
             headers: {
-              Authorization: "Bearer " + auth?.token,
+              Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
             },
           }
         );
@@ -88,13 +87,13 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
 
       if (instance === "brand") {
         const response = await axios.put(
-          `/brands/${object?._id}`,
+          `/api/brands/${object?._id}`,
           {
             name: newName,
           },
           {
             headers: {
-              Authorization: "Bearer " + auth?.token,
+              Authorization: `Bearer ${auth?.token ? auth.token : ""}`,
             },
           }
         );
@@ -114,8 +113,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
         submitRef.current.click();
       }
     } catch (error) {
-      console.log(error);
-      toast.error(`something went wrong in update ${instance}`);
+      toast.error(`Update ${instance} fail`);
     }
   };
 
@@ -238,7 +236,7 @@ function ModalDashboard({ instance, object = null, method, setObject }) {
               className="btn btn-secondary"
               data-bs-dismiss="modal"
             >
-              Cancer
+              Cancel
             </button>
             {method === "delete" && (
               <button

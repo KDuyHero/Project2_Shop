@@ -24,8 +24,8 @@ function ProductBrand() {
 
     const response =
       params.brand !== "search"
-        ? await axios.get(`/products?brand=${params.brand}${searchQuery}`)
-        : await axios.get(`/products?${searchQuery}`);
+        ? await axios.get(`/api/products?brand=${params.brand}${searchQuery}`)
+        : await axios.get(`/api/products?${searchQuery}`);
     if (response?.data?.products) {
       setProducts(response.data.products);
     }

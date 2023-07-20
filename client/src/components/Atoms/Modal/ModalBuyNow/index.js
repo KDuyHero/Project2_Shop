@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import "./ModalBuyNow.css";
 
 function ModalBuyNow({ product = null }) {
-  console.log(product);
   const [count, setCount] = useState(1);
 
   const convertPriceToString = (price) => {
@@ -15,8 +14,7 @@ function ModalBuyNow({ product = null }) {
   };
 
   const getImageUrl = (url) => {
-    const domain = "http://localhost:8080";
-    return domain + url;
+    return process.env.REACT_APP_BACKEND_DOMAIN + url;
   };
 
   useEffect(() => {
@@ -126,7 +124,7 @@ function ModalBuyNow({ product = null }) {
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
-                Cancer
+                Cancel
               </button>
               <button
                 type="button"
@@ -134,7 +132,7 @@ function ModalBuyNow({ product = null }) {
                 data-bs-dismiss="modal"
                 onClick={() => {
                   setCount(1);
-                  toast.success("Thanh toán thành công!");
+                  toast.success("Payment successfully!");
                 }}
               >
                 Thanh toán

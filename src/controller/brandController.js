@@ -9,7 +9,6 @@ const getAllBrands = async (req, res) => {
       brands,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in get all Brands",
       error,
@@ -28,7 +27,6 @@ const createBrand = async (req, res) => {
       newBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in create brand",
       error,
@@ -45,7 +43,6 @@ const getBrand = async (req, res) => {
       brand: foundBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in get brand",
       error,
@@ -57,7 +54,7 @@ const updateBrand = async (req, res) => {
     const { name } = req.body;
     const { brandId } = req.params;
     const foundBrand = await brandModel.findOne({ name });
-    if (foundBrand) return res.status(200).json("Tên brand này đã tồn tại");
+    if (foundBrand) return res.status(200).json("Brand name already exist");
     const updateBrand = await brandModel.findByIdAndUpdate(brandId, { name });
     return res.status(200).json({
       success: true,
@@ -65,7 +62,6 @@ const updateBrand = async (req, res) => {
       updateBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in update brand",
       error,
@@ -77,7 +73,7 @@ const deleteBrand = async (req, res) => {
     const { brandId } = req.params;
     const foundBrand = await brandModel.findById(brandId);
 
-    if (!foundBrand) return res.status(200).json("brand không tồn tại");
+    if (!foundBrand) return res.status(200).json("brand not found");
 
     const deleteBrand = await brandModel.findByIdAndDelete(brandId);
     return res.status(200).json({
@@ -86,7 +82,6 @@ const deleteBrand = async (req, res) => {
       deleteBrand,
     });
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       message: "Some thing went wrong in delete brand",
       error,

@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.0",
-    "cloudinary": "^1.36.4",
     "concurrently": "^8.0.1",
     "cookie-parser": "^1.4.6",
     "cookie-session": "^2.0.0",
@@ -34,6 +33,8 @@
     "sequelize": "^6.31.0",
     "sharp": "^0.32.1",
     "slugify": "^1.6.6",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "validation": "0.0.1"
   }
 }

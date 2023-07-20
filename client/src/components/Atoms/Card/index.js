@@ -83,11 +83,13 @@ function Card({
               padding: 0,
               textTransform: "capitalize",
             }}
+            className="col-12 text-center"
           >
             {product.name}
           </h5>
+          <p className="col-12 text-center text-decoration-line-through text-danger">{convertPriceToString(product.price)}</p>
         </div>
-        <div className="row">
+        <div className="row justify-content-around">
           <div className="col-12 col-lg-6 px-2 price">
             {product.discount > 0
               ? convertPriceToString(
@@ -97,7 +99,7 @@ function Card({
           </div>
 
           {product.discount > 0 && (
-            <div className="col-12 col-lg-6 px-2 discount">
+            <div className="col-12 col-lg-3 px-2 discount bg-primary text-light rounded-5">
               <FontAwesomeIcon icon={faArrowDown} />
               {product.discount}%
             </div>

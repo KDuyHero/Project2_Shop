@@ -78,7 +78,7 @@ function Card({
         }}
       ></div>
       <div className="product-info container-fluid">
-        <div className="row text-danger">
+        <div className="row">
           <h5
             style={{
               padding: 0,
@@ -88,7 +88,7 @@ function Card({
           >
             {product.name}
           </h5>
-          <p className="col-12 text-center text-decoration-line-through">{convertPriceToString(product.price)}</p>
+          <p className="col-12 text-center text-decoration-line-through text-danger">{convertPriceToString(product.price)}</p>
         </div>
         <div className="row justify-content-around">
           <div className="col-12 col-lg-6 px-2 price">

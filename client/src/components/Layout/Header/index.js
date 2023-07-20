@@ -41,7 +41,7 @@ function Header() {
   };
 
   const getNumberOfCart = async () => {
-    if (auth?.token ? auth.token : "") {
+    if (auth?.token) {
       let response = await axios.get("/api/users/cart", {
         headers: {
           Authorization: `Bearer ${auth?.token ? auth.token : ""}`,

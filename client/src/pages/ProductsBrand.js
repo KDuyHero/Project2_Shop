@@ -45,7 +45,6 @@ function ProductBrand() {
   return (
     <Layout title="Homepage">
       <div className="container mt-4 g-0 homepage-wrapper">
-        <ListBanner />
         <FilterBar />
         <div className="row mt-3 container-fluid block-content">
           {params.brand !== "search" ? (

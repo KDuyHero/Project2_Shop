@@ -5,7 +5,12 @@ import Layout from "../../components/Layout/Layout";
 import { toast } from "react-hot-toast";
 import "./ProductDetail.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGear, faStar } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGear,
+  faStar,
+  faShoppingBag,
+  faCartPlus,
+} from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../../context/auth";
 import ModalBuyNow from "../../components/Atoms/Modal/ModalBuyNow";
 
@@ -183,27 +188,21 @@ function ProductDetail() {
                     <div className="btn-container">
                       <button
                         className="btn btn-danger p-2 me-3"
-                        data-bs-toggle={
-                          auth?.token ? auth.token : "" ? "modal" : undefined
-                        }
+                        data-bs-toggle={auth?.token ? "modal" : undefined}
                         data-bs-target={
-                          auth?.token
-                            ? auth.token
-                            : ""
-                            ? "#modal-buy-now"
-                            : undefined
+                          auth?.token ? "#modal-buy-now" : undefined
                         }
                         onClick={() => {
                           handleBuyNow();
                         }}
                       >
-                        Mua ngay
+                        <FontAwesomeIcon icon={faShoppingBag} /> Mua ngay
                       </button>
                       <button
                         className="btn btn-primary p-2"
                         onClick={() => handleAddToCart()}
                       >
-                        Thêm vào giỏ hàng
+                        <FontAwesomeIcon icon={faCartPlus} /> Thêm vào giỏ hàng
                       </button>
                     </div>
                   </div>

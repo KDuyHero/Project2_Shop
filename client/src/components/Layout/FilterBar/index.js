@@ -405,6 +405,21 @@ function FilterBar() {
               </button>
             </div>
           </div>
+
+          <div className=" d-inline-flex ms-3">
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={() =>
+                setSearch({
+                  limit: null,
+                  sort: "-discount",
+                })
+              }
+            >
+              Reset All
+            </button>
+          </div>
         </div>
       </div>
 
